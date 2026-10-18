@@ -7,8 +7,7 @@ from kivy.metrics import dp
 from kivy.app import App
 from kivy.utils import get_hex_from_color
 from widgets import NeoBadge
-from screens.common import wrap_label, ajustar_alto
-from screens.inicio import MESES, plural
+from screens.common import wrap_label, ajustar_alto, MESES, plural, poner_texto
 from screens.ruta import nivel_actual
 from data import db
 from data.config import ACTIVIDADES_PARA_DESBLOQUEAR
@@ -108,13 +107,13 @@ class EvaluacionScreen(Screen):
         izquierda.add_widget(wrap_label(fecha_corta(s['fecha']), font_size='13sp',
                                         color=theme.TEXTO_SEC))
         fila.add_widget(izquierda)
-        puntaje = wrap_label(str(s['puntaje_global']), font_size='20sp', color=nivel['color'],
-                             halign='right')
+        puntaje = wrap_label('', font_size='20sp', color=nivel['color'], halign='right')
         puntaje.font_name = theme.F_DISPLAY
         puntaje.bold = False
         puntaje.size_hint_x = None
-        puntaje.width = dp(44)
+        puntaje.width = dp(62)
         puntaje.pos_hint = {'center_y': 0.5}
+        poner_texto(puntaje, f"{s['puntaje_global']}%")
         fila.add_widget(puntaje)
         fila.add_widget(NeoBadge(text=nivel['nombre'], surface=nivel['color'],
                                  size_hint=(None, None), size=(dp(104), dp(24)),

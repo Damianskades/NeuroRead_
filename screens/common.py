@@ -1,8 +1,57 @@
 import random
+import re
 from kivy.uix.label import Label
 from kivy.metrics import dp, sp
 from widgets import NeoChip
 import theme
+
+DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+         'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+
+def fecha_larga(d):
+    return f'{DIAS[d.weekday()]}, {d.day} de {MESES[d.month - 1]}'
+
+
+def plural(n, singular, varios):
+    return f'{n} {singular if n == 1 else varios}'
+
+
+ESCALA_PORCENTAJE = 0.9
+_MARCAS_PORCENTAJE = re.compile(r'\[size=([0-9.]+)\]|\[/size\]|%')
+
+
+def porcentaje(texto, tamano=None):
+    partes = []
+    tamanos = []
+    inicio = 0
+    for m in _MARCAS_PORCENTAJE.finditer(texto):
+        partes.append(texto[inicio:m.start()])
+        inicio = m.end()
+        marca = m.group(0)
+        if marca != '%':
+            if m.group(1):
+                tamanos.append(float(m.group(1)))
+            elif tamanos:
+                tamanos.pop()
+            partes.append(marca)
+            continue
+        abrir, cerrar = f'[font={theme.F_PORCENTAJE}]', '[/font]'
+        if theme.PORCENTAJE_RESPALDO:
+            abrir, cerrar = abrir + '[b]', '[/b]' + cerrar
+        else:
+            base = tamanos[-1] if tamanos else tamano
+            if base:
+                abrir, cerrar = abrir + f'[size={round(base * ESCALA_PORCENTAJE)}]', '[/size]' + cerrar
+        partes.append(abrir + '%' + cerrar)
+    partes.append(texto[inicio:])
+    return ''.join(partes)
+
+
+def poner_texto(etiqueta, texto):
+    etiqueta.markup = True
+    etiqueta.text = porcentaje(texto, etiqueta.font_size)
 
 
 def mezclar_opciones(opts, ans):

@@ -1,7 +1,7 @@
 from screens.splash import SplashScreen
 from screens.login import LoginScreen
 from screens.registro import RegistroScreen
-from screens.principal import PrincipalScreen, PestanaScreen
+from screens.principal import PrincipalScreen
 from screens.inicio import InicioScreen
 from screens.libros import LibrosScreen, LibroDetalleScreen
 from screens.lector import LectorScreen

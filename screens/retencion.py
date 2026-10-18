@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.app import App
 from kivy.metrics import dp
-from screens.common import option_chip, marcar_opciones, mezclar_opciones
+from screens.common import option_chip, marcar_opciones, mezclar_opciones, poner_texto
 import session
 import theme
 
@@ -61,7 +61,7 @@ class RetencionScreen(Screen):
             self._fin()
             return
         q = preguntas[self._idx]
-        self.ids.ret_pregunta.text = q['q']
+        poner_texto(self.ids.ret_pregunta, q['q'])
         self.ids.ret_bar.max = len(preguntas)
         self.ids.ret_bar.value = self._idx
         self.ids.ret_prog.text = f'Pregunta {self._idx + 1} de {len(preguntas)}'

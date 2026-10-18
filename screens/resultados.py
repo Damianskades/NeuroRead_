@@ -1,8 +1,9 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
-from kivy.metrics import dp
+from kivy.metrics import dp, sp
+from kivy.utils import get_hex_from_color
 from widgets import NeoCard, NeoBar
-from screens.common import wrap_label, insignia_diferencia, ajustar_alto
+from screens.common import wrap_label, insignia_diferencia, ajustar_alto, poner_texto
 from data import db
 from data.niveles import nivel_de, por_clave, indice
 import session
@@ -72,10 +73,12 @@ class ResultadosScreen(Screen):
             session.guardada = True
 
         nivel = nivel_de(total)
-        self.ids.res_score.text = f'{total}/100'
+        gris = get_hex_from_color(theme.TEXTO_SEC)
+        poner_texto(self.ids.res_score, f'{total}[size={int(sp(18))}][color={gris}]%[/color][/size]')
         self.ids.res_score.color = nivel['color']
         self.ids.res_nivel.text = nivel['nombre']
         self.ids.res_nivel.surface = nivel['color']
+        poner_texto(self.ids.res_rango, f"{nivel['nombre']} va de {nivel['minimo']}% a {nivel['maximo']}%")
         self.ids.res_retro.text = nivel['retroalimentacion']
         self._mostrar_comparacion(session.comparacion)
         self.ids.res_titulo_texto.text = f'Texto evaluado: {s.get("texto_titulo", "")}'
@@ -155,8 +158,8 @@ class ResultadosScreen(Screen):
         card.opacity = 1 if comp else 0
         if not comp:
             return
-        self.ids.res_comp_anterior.text = str(comp['anterior'])
-        self.ids.res_comp_nuevo.text = str(comp['nuevo'])
+        poner_texto(self.ids.res_comp_anterior, f"{comp['anterior']}%")
+        poner_texto(self.ids.res_comp_nuevo, f"{comp['nuevo']}%")
         texto, fondo, color = insignia_diferencia(comp['diferencia'])
         self.ids.res_comp_dif.text = texto
         self.ids.res_comp_dif.surface = fondo
@@ -173,8 +176,9 @@ class ResultadosScreen(Screen):
         titulo = wrap_label(NOMBRES[code], font_size='14.5sp', color=col)
         titulo.font_name = theme.F_DISPLAY
         titulo.pos_hint = {'top': 1}
-        valor_lbl = wrap_label(valor, font_size='15sp', color=theme.TEXTO, halign='right')
+        valor_lbl = wrap_label('', font_size='15sp', color=theme.TEXTO, halign='right')
         valor_lbl.font_name = theme.F_DISPLAY
+        poner_texto(valor_lbl, valor)
         valor_lbl.size_hint_x = None
         valor_lbl.width = dp(120)
         valor_lbl.pos_hint = {'top': 1}

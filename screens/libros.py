@@ -8,16 +8,12 @@ from kivy.factory import Factory
 from kivy.metrics import dp
 from kivy.app import App
 from widgets import NeoCard, NeoIcon, NeoBadge, NeoBar, NeoButton
-from screens.common import wrap_label, ajustar_alto
+from screens.common import wrap_label, ajustar_alto, plural
 from screens.ruta import nivel_actual
 from data import db
 from data.libros import LIBROS, libro_por_id, buscar_actividad, actividades_de_nivel
 import session
 import theme
-
-
-def plural(n, singular, varios):
-    return f'{n} {singular if n == 1 else varios}'
 
 
 def estado_libros(usuario_id):

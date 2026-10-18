@@ -3,25 +3,14 @@ from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from kivy.metrics import sp
 from kivy.utils import get_hex_from_color
+from screens.common import fecha_larga, plural, poner_texto
 from data import db
 from data.config import ACTIVIDADES_PARA_DESBLOQUEAR
 from data.libros import libro_por_id, buscar_actividad, actividades_de_nivel
 from data.niveles import (nivel_de, por_clave, siguiente_nivel, puntos_para_siguiente,
-                          HABILIDADES)
+                          HABILIDADES, NIVELES)
 import session
 import theme
-
-DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
-         'septiembre', 'octubre', 'noviembre', 'diciembre']
-
-
-def fecha_larga(d):
-    return f'{DIAS[d.weekday()]}, {d.day} de {MESES[d.month - 1]}'
-
-
-def plural(n, singular, varios):
-    return f'{n} {singular if n == 1 else varios}'
 
 
 def habilidad_mas_baja(sesion):
@@ -66,19 +55,24 @@ class InicioScreen(Screen):
         self.ids.ini_nivel.text = nivel['nombre']
         self.ids.ini_nivel.surface = col
         gris = get_hex_from_color(theme.TEXTO_SEC)
-        self.ids.ini_puntaje.text = f'{puntaje}[size={int(sp(18))}][color={gris}]/100[/color][/size]'
+        poner_texto(self.ids.ini_puntaje, f'{puntaje}[size={int(sp(18))}][color={gris}]%[/color][/size]')
         self.ids.ini_puntaje.color = col
-        self.ids.ini_barra.value = puntaje
-        self.ids.ini_barra.fill = col
+        barra = self.ids.ini_barra
+        barra.value = puntaje
+        barra.fill = col
+        barra.marcas = [n['minimo'] for n in NIVELES if n['minimo'] > 0]
         siguiente = siguiente_nivel(nivel['clave'])
         if siguiente is None:
+            barra.meta = -1
             self.ids.ini_faltan.text = 'Alcanzaste el nivel más alto'
             return
+        barra.meta = siguiente['minimo']
+        barra.color_meta = siguiente['color']
         faltan = puntos_para_siguiente(puntaje)
         claro = get_hex_from_color(theme.TEXTO)
-        self.ids.ini_faltan.text = (
-            f"Te faltan [b][color={claro}]{plural(faltan, 'punto', 'puntos')}[/color][/b] "
-            f"para llegar a {siguiente['nombre']}")
+        poner_texto(self.ids.ini_faltan,
+                    f"Te faltan [b][color={claro}]{plural(faltan, 'punto', 'puntos')}[/color][/b] "
+                    f"para llegar a\n{siguiente['nombre']} ({siguiente['minimo']}%)")
 
     def _objetivo(self, ultima):
         habilidad = HABILIDADES[habilidad_mas_baja(ultima)]

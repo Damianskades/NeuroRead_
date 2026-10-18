@@ -467,14 +467,6 @@ def guardar_sesion(usuario_id, datos):
         return cur.lastrowid
 
 
-def historial(usuario_id, limite=5):
-    with _db() as con:
-        filas = con.execute(
-            'SELECT ses_fecha, ses_puntajeGlobal FROM tblSesiones WHERE id_usuario = ? '
-            'ORDER BY id_sesion DESC LIMIT ?', (usuario_id, limite)).fetchall()
-    return [_a_app(f, SESIONES) for f in reversed(filas)]
-
-
 def historial_completo(usuario_id):
     with _db() as con:
         filas = con.execute('SELECT * FROM tblSesiones WHERE id_usuario = ? '

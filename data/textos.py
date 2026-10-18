@@ -352,6 +352,3 @@ BIBLIOTECA = [
 def get_texto_aleatorio(excluir_id=None):
     opciones = [t for t in BIBLIOTECA if t['id'] != excluir_id]
     return random.choice(opciones)
-
-def get_todos_los_titulos():
-    return [(t['id'], t['titulo']) for t in BIBLIOTECA]

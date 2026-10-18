@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.app import App
-from screens.common import option_chip, marcar_opciones, mezclar_opciones
+from screens.common import option_chip, marcar_opciones, mezclar_opciones, poner_texto
 from data.niveles import clave_tipo
 import session
 import theme
@@ -34,7 +34,7 @@ class ComprensionScreen(Screen):
             self._fin()
             return
         q = preguntas[self._idx]
-        self.ids.comp_pregunta.text = q['q']
+        poner_texto(self.ids.comp_pregunta, q['q'])
         self.ids.comp_tipo.text = q['tipo'].upper()
         self.ids.comp_tipo.surface = TIPO_COLOR.get(q['tipo'], theme.VERDE)
         self.ids.comp_bar.max = len(preguntas)

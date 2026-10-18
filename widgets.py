@@ -123,12 +123,32 @@ class NeoBar(Widget):
     max = NumericProperty(100)
     fill = ListProperty(theme.DORADO)
     radius = NumericProperty(dp(7))
+    marcas = ListProperty([])
+    meta = NumericProperty(-1)
+    color_meta = ListProperty(theme.DORADO)
 
     def __init__(self, **kw):
         super().__init__(**kw)
         self.bind(pos=self._redraw, size=self._redraw,
-                  value=self._redraw, max=self._redraw, fill=self._redraw)
+                  value=self._redraw, max=self._redraw, fill=self._redraw,
+                  marcas=self._redraw, meta=self._redraw, color_meta=self._redraw)
         self._redraw()
+
+    def _marcas(self, x, y, w, h):
+        self.canvas.after.clear()
+        if self.max == 0:
+            return
+        ancho = dp(2)
+        with self.canvas.after:
+            for m in self.marcas:
+                if m == self.meta:
+                    continue
+                Color(*theme.TEXTO_SEC)
+                Rectangle(pos=(round(x + w * m / self.max - ancho / 2), y), size=(ancho, h))
+            if self.meta in self.marcas:
+                Color(*self.color_meta)
+                Rectangle(pos=(round(x + w * self.meta / self.max - ancho / 2), y - dp(4)),
+                          size=(ancho, h + dp(8)))
 
     def _redraw(self, *a):
         self.canvas.before.clear()
@@ -147,6 +167,7 @@ class NeoBar(Widget):
                                  radius=[r])
             Color(*theme.BORDE)
             Line(rounded_rectangle=(x, y, w, h, r), width=dp(2))
+        self._marcas(x, y, w, h)
 
 
 CARPETA_ICONOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'icons')

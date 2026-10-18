@@ -5,7 +5,7 @@ from kivy.factory import Factory
 from kivy.metrics import dp
 from kivy.app import App
 from widgets import NeoCard, NeoBar, NeoIcon, NeoBadge, NeoButton
-from screens.common import wrap_label, insignia_diferencia, ajustar_alto
+from screens.common import wrap_label, insignia_diferencia, ajustar_alto, poner_texto
 from screens.ruta import nivel_actual
 from screens.resultados import NOMBRES
 from data import db
@@ -30,8 +30,8 @@ def fila_barra(nombre, valor, color):
     arriba = ajustar_alto(BoxLayout(spacing=dp(8)))
     etiqueta = wrap_label(nombre, font_size='13sp', color=theme.TEXTO, bold=True)
     etiqueta.pos_hint = {'top': 1}
-    numero = wrap_label(f'{round(valor)}%', font_size='13sp', color=color, bold=True,
-                        halign='right')
+    numero = wrap_label('', font_size='13sp', color=color, bold=True, halign='right')
+    poner_texto(numero, f'{round(valor)}%')
     numero.size_hint_x = None
     numero.width = dp(48)
     numero.pos_hint = {'top': 1}
@@ -134,7 +134,7 @@ class PerfilScreen(Screen):
         stats = db.estadisticas(usuario_id)
         self.ids.perfil_total.text = str(stats['total'])
         self.ids.perfil_racha.text = str(stats['racha'])
-        self.ids.perfil_mejor.text = str(stats['mejor'])
+        poner_texto(self.ids.perfil_mejor, f"{stats['mejor']}%")
 
     def _evolucion(self, usuario_id, ultima):
         ids = self.ids
@@ -146,9 +146,9 @@ class PerfilScreen(Screen):
             ids.perfil_diferencia.surface = theme.TARJETA_ALT
             ids.perfil_diferencia.color = theme.TEXTO_SEC
             return
-        ids.perfil_inicial_pts.text = str(primera['puntaje_global'])
+        poner_texto(ids.perfil_inicial_pts, f"{primera['puntaje_global']}%")
         ids.perfil_inicial_pts.color = nivel_sesion(primera)['color']
-        ids.perfil_actual_pts.text = str(ultima['puntaje_global'])
+        poner_texto(ids.perfil_actual_pts, f"{ultima['puntaje_global']}%")
         ids.perfil_actual_pts.color = nivel_sesion(ultima)['color']
         texto, fondo, color = insignia_diferencia(ultima['puntaje_global'] - primera['puntaje_global'])
         ids.perfil_diferencia.text = texto

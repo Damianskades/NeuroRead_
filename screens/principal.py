@@ -1,11 +1,6 @@
 from kivy.uix.screenmanager import Screen, FadeTransition
-from kivy.properties import StringProperty
 
 PESTANAS = ['inicio', 'ruta', 'evaluacion', 'libros', 'perfil']
-
-
-class PestanaScreen(Screen):
-    titulo = StringProperty('')
 
 
 class PrincipalScreen(Screen):

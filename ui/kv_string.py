@@ -124,7 +124,6 @@ KV = """
         fondo: root.fondo
         pos_hint: {'top': 1}
     BoxLayout:
-        id: paso_col
         orientation: 'vertical'
         spacing: dp(2)
         size_hint_y: None
@@ -140,7 +139,6 @@ KV = """
             size_hint_y: None
             height: self.texture_size[1]
         LSec:
-            id: paso_texto
             text: root.texto
             font_size: '13sp'
             font_name: theme.F_DISPLAY
@@ -459,7 +457,6 @@ ScreenManager:
                     size: dp(46), dp(46)
                     pos_hint: {'top': 1}
                 BoxLayout:
-                    id: ini_obj_col
                     orientation: 'vertical'
                     spacing: dp(4)
                     size_hint_y: None
@@ -580,7 +577,6 @@ ScreenManager:
                     size: dp(40), dp(40)
                     pos_hint: {'top': 1}
                 BoxLayout:
-                    id: ini_clas_col
                     orientation: 'vertical'
                     spacing: dp(4)
                     size_hint_y: None
@@ -1224,7 +1220,6 @@ ScreenManager:
                             color_glifo: theme.TEXTO_OSCURO
                             size: dp(44), dp(44)
                 BoxLayout:
-                    id: det_info
                     orientation: 'vertical'
                     spacing: dp(6)
                     size_hint_y: None
@@ -1332,37 +1327,6 @@ ScreenManager:
                     size_hint_y: None
                     height: dp(54)
                     on_press: root.accion()
-
-<PestanaScreen>:
-    canvas.before:
-        Color:
-            rgba: theme.FONDO
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    BoxLayout:
-        orientation: 'vertical'
-        padding: [dp(20), dp(46), dp(20), dp(20)]
-        spacing: dp(8)
-        LDisplay:
-            text: root.titulo
-            font_size: '26sp'
-            halign: 'left'
-            valign: 'top'
-            text_size: self.width, None
-            size_hint_y: None
-            height: self.texture_size[1]
-        LSec:
-            text: 'Pantalla en construcción'
-            font_size: '13sp'
-            font_name: theme.F_DISPLAY
-            bold: True
-            halign: 'left'
-            valign: 'top'
-            text_size: self.width, None
-            size_hint_y: None
-            height: self.texture_size[1]
-        Widget:
 
 <PrincipalScreen>:
     canvas.before:
@@ -1933,7 +1897,6 @@ ScreenManager:
                     text: ''
                     pos_hint: {'top': 1}
                 BoxLayout:
-                    id: perfil_info
                     orientation: 'vertical'
                     spacing: dp(4)
                     size_hint_y: None
@@ -1994,7 +1957,6 @@ ScreenManager:
                         size_hint_y: None
                         height: self.texture_size[1]
                     LSec:
-                        id: perfil_total_lbl
                         text: 'Evaluaciones'
                         font_size: '13sp'
                         font_name: theme.F_DISPLAY
@@ -2024,7 +1986,6 @@ ScreenManager:
                         size_hint_y: None
                         height: self.texture_size[1]
                     LSec:
-                        id: perfil_racha_lbl
                         text: 'Días de racha'
                         font_size: '13sp'
                         font_name: theme.F_DISPLAY
@@ -2054,7 +2015,6 @@ ScreenManager:
                         size_hint_y: None
                         height: self.texture_size[1]
                     LSec:
-                        id: perfil_mejor_lbl
                         text: 'Mejor puntaje'
                         font_size: '13sp'
                         font_name: theme.F_DISPLAY
@@ -2189,7 +2149,6 @@ ScreenManager:
                     size: dp(46), dp(46)
                     pos_hint: {'top': 1}
                 BoxLayout:
-                    id: perfil_rec_col
                     orientation: 'vertical'
                     spacing: dp(6)
                     size_hint_y: None
@@ -2261,7 +2220,6 @@ ScreenManager:
         size: dp(46), dp(46)
         pos_hint: {'top': 1}
     BoxLayout:
-        id: hc_textos
         orientation: 'vertical'
         spacing: dp(2)
         size_hint_y: None
@@ -2864,7 +2822,6 @@ ScreenManager:
             size: self.size
     FloatLayout:
         BoxLayout:
-            id: conc_main
             orientation: 'vertical'
             padding: [dp(20), dp(46), dp(20), dp(26)]
             spacing: dp(11)
@@ -3297,6 +3254,7 @@ ScreenManager:
                     height: self.texture_size[1]
                 LDisplay:
                     id: res_score
+                    markup: True
                     text: '--'
                     font_size: '52sp'
                     color: theme.DORADO
@@ -3313,6 +3271,17 @@ ScreenManager:
                     size_hint: None, None
                     size: dp(190), dp(34)
                     pos_hint: {'center_x': 0.5}
+                LSec:
+                    id: res_rango
+                    text: ''
+                    font_size: '13sp'
+                    font_name: theme.F_DISPLAY
+                    bold: True
+                    halign: 'center'
+                    valign: 'top'
+                    text_size: self.width, None
+                    size_hint_y: None
+                    height: self.texture_size[1]
             NeoCard:
                 surface: theme.TARJETA
                 size_hint_y: None

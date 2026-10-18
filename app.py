@@ -8,7 +8,7 @@ import widgets
 import theme
 from ui.kv_string import KV
 from screens import (
-    SplashScreen, LoginScreen, RegistroScreen, PrincipalScreen, PestanaScreen,
+    SplashScreen, LoginScreen, RegistroScreen, PrincipalScreen,
     InicioScreen, LibrosScreen, LibroDetalleScreen, LectorScreen, RutaScreen,
     ActividadScreen, EvaluacionScreen,
     BienvenidaEvaluacionScreen, VelocidadScreen, ComprensionScreen,

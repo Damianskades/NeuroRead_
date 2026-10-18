@@ -73,6 +73,18 @@ except Exception:
     F_DISPLAY = 'Roboto'
     F_BODY = 'Roboto'
 
+F_PORCENTAJE = 'Roboto'
+PORCENTAJE_RESPALDO = True
+_comic = _buscar('comicbd.ttf') or _buscar('comic.ttf')
+try:
+    if _comic:
+        LabelBase.register(name='NeoPorcentaje', fn_regular=_comic)
+        F_PORCENTAJE = 'NeoPorcentaje'
+        PORCENTAJE_RESPALDO = False
+except Exception:
+    F_PORCENTAJE = 'Roboto'
+    PORCENTAJE_RESPALDO = True
+
 
 HINTING = 'normal'
 
