@@ -1,0 +1,20 @@
+from screens.splash import SplashScreen
+from screens.login import LoginScreen
+from screens.registro import RegistroScreen
+from screens.principal import PrincipalScreen, PestanaScreen
+from screens.inicio import InicioScreen
+from screens.libros import LibrosScreen, LibroDetalleScreen
+from screens.lector import LectorScreen
+from screens.ruta import RutaScreen
+from screens.evaluacion import EvaluacionScreen
+from screens.actividad import ActividadScreen
+from screens.bienvenida_evaluacion import BienvenidaEvaluacionScreen
+from screens.velocidad import VelocidadScreen
+from screens.comprension import ComprensionScreen
+from screens.interpretacion import InterpretacionScreen
+from screens.imaginacion import ImaginacionScreen
+from screens.concentracion import ConcentracionScreen
+from screens.retencion import RetencionScreen
+from screens.resultados import ResultadosScreen
+from screens.perfil import PerfilScreen
+from screens.editar_perfil import EditarPerfilScreen
