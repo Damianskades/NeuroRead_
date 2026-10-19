@@ -58,6 +58,10 @@ class NeuroReadApp(App):
         self.root.get_screen('lector').abrir(libro_id, numero, origen)
         self.ir_a('lector')
 
+    def abrir_neuroscore(self, sesion_id, origen):
+        self.root.get_screen('resultados').consultar(sesion_id, origen)
+        self.ir_a('resultados')
+
     def abrir_actividad(self, actividad_id, origen='ruta'):
         self.root.get_screen('actividad').abrir(actividad_id, origen)
         self.ir_a('actividad')

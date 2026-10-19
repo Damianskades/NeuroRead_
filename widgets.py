@@ -203,6 +203,7 @@ class NeoIcon(Widget):
     icon = StringProperty('libro')
     radius = NumericProperty(dp(12))
     marco = BooleanProperty(True)
+    girado = BooleanProperty(False)
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -211,7 +212,7 @@ class NeoIcon(Widget):
             self.size = (dp(46), dp(46))
         self.bind(pos=self._redraw, size=self._redraw, color_chip=self._redraw,
                   color_glifo=self._redraw, icon=self._redraw, marco=self._redraw,
-                  radius=self._redraw)
+                  radius=self._redraw, girado=self._redraw)
         self._redraw()
 
     def _redraw(self, *a):
@@ -235,8 +236,11 @@ class NeoIcon(Widget):
             tw, th = textura.size
             escala = lado / max(tw, th)
             iw, ih = round(tw * escala), round(th * escala)
+            tc = list(textura.tex_coords)
+            if self.girado:
+                tc = tc[4:] + tc[:4]
             Color(*glifo)
-            Rectangle(texture=textura, size=(iw, ih),
+            Rectangle(texture=textura, size=(iw, ih), tex_coords=tc,
                       pos=(round(x + (w - iw) / 2), round(y + (h - ih) / 2)))
 
 

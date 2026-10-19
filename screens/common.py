@@ -1,5 +1,6 @@
 import random
 import re
+from datetime import date
 from kivy.uix.label import Label
 from kivy.metrics import dp, sp
 from widgets import NeoChip
@@ -12,6 +13,11 @@ MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto
 
 def fecha_larga(d):
     return f'{DIAS[d.weekday()]}, {d.day} de {MESES[d.month - 1]}'
+
+
+def fecha_corta(iso):
+    d = date.fromisoformat(iso[:10])
+    return f'{d.day} de {MESES[d.month - 1]}'
 
 
 def plural(n, singular, varios):

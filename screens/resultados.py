@@ -1,15 +1,18 @@
 from kivy.uix.screenmanager import Screen
+from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.metrics import dp, sp
 from kivy.utils import get_hex_from_color
 from widgets import NeoCard, NeoBar
-from screens.common import wrap_label, insignia_diferencia, ajustar_alto, poner_texto
+from screens.common import wrap_label, insignia_diferencia, ajustar_alto, poner_texto, fecha_corta
 from data import db
 from data.niveles import nivel_de, por_clave, indice
+from data.textos import BIBLIOTECA
 import session
 import theme
 
 COLORES_MODULOS = theme.MODULE_COLORS_CODE
+SALTO = chr(10)
 
 NOMBRES = {
     'VEL': 'NeuroRead', 'COM': 'NeuroTest', 'INT': 'NeuroInsight',
@@ -58,63 +61,155 @@ def calcular_porcentajes(s):
             'IMA': imag, 'CON': conc, 'RET': ret}
 
 
+CAMPOS_MODULO = {'VEL': 'velocidad', 'COM': 'comprension', 'INT': 'interpretacion',
+                 'IMA': 'imaginacion', 'CON': 'concentracion', 'RET': 'retencion'}
+
+DETALLE_RETENCION = 'Memoria diferida: recordar detalles minutos después de leer consolida el aprendizaje.'
+
+
+def fortalezas_y_mejoras(pct):
+    fortalezas = [HABILIDAD[k] for k, v in pct.items() if v >= 70]
+    por_mejorar = [HABILIDAD[k] for k, v in pct.items() if v < 60]
+    return (fortalezas[:3] or ['Sigue practicando, vas por buen camino'],
+            por_mejorar[:3] or ['Todo en buen nivel, felicidades'])
+
+
+def comparar(anterior, nivel_previo, total, nivel):
+    cambio = indice(nivel['clave']) - indice(nivel_previo['clave'])
+    signo = (cambio > 0) - (cambio < 0)
+    return {'anterior': anterior, 'nuevo': total, 'diferencia': total - anterior,
+            'mensaje': MENSAJES_COMPARACION[signo], 'signo': signo}
+
+
+def _armar(total, nivel, pct, modulos, titulo, comparacion, encabezado):
+    fortalezas, por_mejorar = fortalezas_y_mejoras(pct)
+    return {'puntaje': total, 'nivel': nivel, 'pct': pct, 'modulos': modulos,
+            'fortalezas': fortalezas, 'por_mejorar': por_mejorar, 'texto_titulo': titulo,
+            'comparacion': comparacion, 'encabezado': encabezado}
+
+
+def datos_sesion_actual(s):
+    pct = calcular_porcentajes(s)
+    total = round(sum(pct.values()) / len(pct))
+    c = s['concentracion']
+    focus_extra = 'NeuroUltra superado' if c['ultra_superado'] else (
+        'Llegó a NeuroUltra' if c['nivel_max'] == 'ULTRA' else
+        f"Nivel máximo: {NOMBRE_NIVEL.get(c['nivel_max'], c['nivel_max'].title())}")
+    modulos = [
+        ('VEL', f"{s['velocidad']['wpm']} PPM",
+         f"Leíste el texto en {s['velocidad']['tiempo_total']}s. Un lector adulto promedio está entre 180 y 240 PPM."),
+        ('COM', f"{s['comprension']['correctas']}/{s['comprension']['total']}",
+         f"Literal: {s['comprension']['literal']}, inferencial: {s['comprension']['inferencial']}, crítica: {s['comprension']['critica']}"),
+        ('INT', f"{round(pct['INT'])}%",
+         f"Redactaste {s['interpretacion']['palabras_total']} palabras analizando emoción e intención del autor."),
+        ('IMA', f"{round(pct['IMA'])}%",
+         f"{s['imaginacion']['palabras']} palabras con {s['imaginacion']['riqueza']} descriptores sensoriales detectados."),
+        ('CON', f"{c['aciertos']}/{c['total']}",
+         f"{focus_extra}. Tiempo de reacción promedio: {c['tiempo_promedio']}s. Errores: {c['errores']}"),
+        ('RET', f"{s['retencion']['correctas']}/{s['retencion']['total']}", DETALLE_RETENCION),
+    ]
+    return _armar(total, nivel_de(total), pct, modulos, s.get('texto_titulo', ''), None, None)
+
+
+def _por_ciento(valor):
+    return '--' if valor is None else f'{round(valor)}%'
+
+
+def datos_sesion_guardada(sesion, previa):
+    pct = {code: float(sesion.get(campo) or 0) for code, campo in CAMPOS_MODULO.items()}
+    total = sesion['puntaje_global']
+    nivel = por_clave(sesion.get('nivel')) or nivel_de(total)
+    ppm, tiempo = sesion.get('ppm'), sesion.get('tiempo_lectura')
+    velocidad = f'{ppm} PPM' if ppm is not None else _por_ciento(pct['VEL'])
+    lectura = (f'Leíste el texto en {round(tiempo, 1):g}s. Un lector adulto promedio está entre 180 y 240 PPM.'
+               if tiempo is not None else
+               f"Obtuviste {_por_ciento(pct['VEL'])} en velocidad lectora.")
+    modulos = [
+        ('VEL', velocidad, lectura),
+        ('COM', _por_ciento(pct['COM']),
+         f"Literal: {_por_ciento(sesion.get('literal'))}, inferencial: {_por_ciento(sesion.get('inferencial'))}, "
+         f"crítica: {_por_ciento(sesion.get('critica'))}"),
+        ('INT', _por_ciento(pct['INT']),
+         f"Obtuviste {_por_ciento(pct['INT'])} al analizar la emoción y la intención del autor."),
+        ('IMA', _por_ciento(pct['IMA']),
+         f"Obtuviste {_por_ciento(pct['IMA'])} en imaginación, creatividad y visualización."),
+        ('CON', _por_ciento(pct['CON']),
+         f"Obtuviste {_por_ciento(pct['CON'])} en atención y tiempo de reacción."),
+        ('RET', _por_ciento(pct['RET']), DETALLE_RETENCION),
+    ]
+    comparacion = None
+    if previa is not None:
+        nivel_previo = por_clave(previa.get('nivel')) or nivel_de(previa['puntaje_global'])
+        comparacion = comparar(previa['puntaje_global'], nivel_previo, total, nivel)
+    texto = next((t['titulo'] for t in BIBLIOTECA if t['id'] == sesion.get('texto_id')), '')
+    tipo = 'Evaluación inicial' if sesion.get('tipo') == 'inicial' else 'Clasificatoria'
+    return _armar(total, nivel, pct, modulos, texto, comparacion, f"{tipo}, {fecha_corta(sesion['fecha'])}")
+
+
 class ResultadosScreen(Screen):
+    modo = 'nuevo'
+    sesion_id = None
+    origen = 'inicio'
+
+    def consultar(self, sesion_id, origen):
+        self.modo = 'consulta'
+        self.sesion_id = sesion_id
+        self.origen = origen
+
     def on_enter(self):
-        self._calcular_y_mostrar()
+        datos = self._datos_consulta() if self.modo == 'consulta' else self._datos_nuevos()
+        if datos is not None:
+            self._dibujar(datos)
+        self.ids.res_scroll.scroll_y = 1
 
-    def _calcular_y_mostrar(self):
+    def on_leave(self):
+        self.modo = 'nuevo'
+        self.sesion_id = None
+
+    def salir(self):
+        App.get_running_app().ir_a_pestana(self.origen if self.modo == 'consulta' else 'inicio')
+
+    def _datos_nuevos(self):
         s = session.session
-        pct = calcular_porcentajes(s)
-        total = round(sum(pct.values()) / len(pct))
-        session.puntaje_global = total
-
+        datos = datos_sesion_actual(s)
+        session.puntaje_global = datos['puntaje']
         if session.usuario and not session.guardada:
-            self._guardar(s, total, pct)
+            self._guardar(s, datos['puntaje'], datos['pct'])
             session.guardada = True
+        datos['comparacion'] = session.comparacion
+        return datos
 
-        nivel = nivel_de(total)
+    def _datos_consulta(self):
+        u = session.usuario
+        if not u:
+            return None
+        sesiones = db.historial_completo(u['id'])
+        for i, sesion in enumerate(sesiones):
+            if sesion['id'] == self.sesion_id:
+                return datos_sesion_guardada(sesion, sesiones[i - 1] if i else None)
+        return None
+
+    def _dibujar(self, datos):
+        ids = self.ids
+        nivel = datos['nivel']
+        consulta = datos['encabezado'] is not None
+        ids.res_consulta.text = datos['encabezado'] or ''
         gris = get_hex_from_color(theme.TEXTO_SEC)
-        poner_texto(self.ids.res_score, f'{total}[size={int(sp(18))}][color={gris}]%[/color][/size]')
-        self.ids.res_score.color = nivel['color']
-        self.ids.res_nivel.text = nivel['nombre']
-        self.ids.res_nivel.surface = nivel['color']
-        poner_texto(self.ids.res_rango, f"{nivel['nombre']} va de {nivel['minimo']}% a {nivel['maximo']}%")
-        self.ids.res_retro.text = nivel['retroalimentacion']
-        self._mostrar_comparacion(session.comparacion)
-        self.ids.res_titulo_texto.text = f'Texto evaluado: {s.get("texto_titulo", "")}'
-
-        fortalezas = [HABILIDAD[k] for k, v in pct.items() if v >= 70]
-        por_mejorar = [HABILIDAD[k] for k, v in pct.items() if v < 60]
-        if not fortalezas:
-            fortalezas = ['Sigue practicando, vas por buen camino']
-        if not por_mejorar:
-            por_mejorar = ['Todo en buen nivel, felicidades']
-        self.ids.res_fortalezas.text = '\n'.join(fortalezas[:3])
-        self.ids.res_por_mejorar.text = '\n'.join(por_mejorar[:3])
-
-        c = s['concentracion']
-        focus_extra = 'NeuroUltra superado' if c['ultra_superado'] else (
-            'Llegó a NeuroUltra' if c['nivel_max'] == 'ULTRA' else
-            f"Nivel máximo: {NOMBRE_NIVEL.get(c['nivel_max'], c['nivel_max'].title())}")
-        datos = [
-            ('VEL', f"{s['velocidad']['wpm']} PPM",
-             f"Leíste el texto en {s['velocidad']['tiempo_total']}s. Un lector adulto promedio está entre 180 y 240 PPM."),
-            ('COM', f"{s['comprension']['correctas']}/{s['comprension']['total']}",
-             f"Literal: {s['comprension']['literal']}, inferencial: {s['comprension']['inferencial']}, crítica: {s['comprension']['critica']}"),
-            ('INT', f"{round(pct['INT'])}%",
-             f"Redactaste {s['interpretacion']['palabras_total']} palabras analizando emoción e intención del autor."),
-            ('IMA', f"{round(pct['IMA'])}%",
-             f"{s['imaginacion']['palabras']} palabras con {s['imaginacion']['riqueza']} descriptores sensoriales detectados."),
-            ('CON', f"{c['aciertos']}/{c['total']}",
-             f"{focus_extra}. Tiempo de reacción promedio: {c['tiempo_promedio']}s. Errores: {c['errores']}"),
-            ('RET', f"{s['retencion']['correctas']}/{s['retencion']['total']}",
-             'Memoria diferida: recordar detalles minutos después de leer consolida el aprendizaje.'),
-        ]
-
-        box = self.ids.res_cards
+        poner_texto(ids.res_score, f"{datos['puntaje']}[size={int(sp(18))}][color={gris}]%[/color][/size]")
+        ids.res_score.color = nivel['color']
+        ids.res_nivel.text = nivel['nombre']
+        ids.res_nivel.surface = nivel['color']
+        poner_texto(ids.res_rango, f"{nivel['nombre']} va de {nivel['minimo']}% a {nivel['maximo']}%")
+        ids.res_retro.text = nivel['retroalimentacion']
+        self._mostrar_comparacion(datos['comparacion'])
+        ids.res_titulo_texto.text = f"Texto evaluado: {datos['texto_titulo']}"
+        ids.res_fortalezas.text = SALTO.join(datos['fortalezas'])
+        ids.res_por_mejorar.text = SALTO.join(datos['por_mejorar'])
+        ids.res_boton.text = 'VOLVER' if consulta else 'IR A INICIO'
+        box = ids.res_cards
         box.clear_widgets()
-        for code, valor, detalle in datos:
-            box.add_widget(self._make_card(code, valor, detalle, pct[code]))
+        for code, valor, detalle in datos['modulos']:
+            box.add_widget(self._make_card(code, valor, detalle, datos['pct'][code]))
 
     def _guardar(self, s, total, pct):
         u = session.usuario
@@ -147,11 +242,7 @@ class ResultadosScreen(Screen):
             return None
         anterior = previa['puntaje_global']
         nivel_previo = por_clave(u.get('nivel')) or nivel_de(anterior)
-        cambio = indice(nivel['clave']) - indice(nivel_previo['clave'])
-        signo = (cambio > 0) - (cambio < 0)
-        return {'anterior': anterior, 'nuevo': total,
-                'diferencia': total - anterior,
-                'mensaje': MENSAJES_COMPARACION[signo], 'signo': signo}
+        return comparar(anterior, nivel_previo, total, nivel)
 
     def _mostrar_comparacion(self, comp):
         card = self.ids.res_comp_card

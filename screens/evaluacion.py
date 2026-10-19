@@ -1,13 +1,13 @@
-from datetime import date
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
 from kivy.app import App
 from kivy.utils import get_hex_from_color
-from widgets import NeoBadge
-from screens.common import wrap_label, ajustar_alto, MESES, plural, poner_texto
+from widgets import NeoBadge, NeoIcon
+from screens.common import wrap_label, ajustar_alto, fecha_corta, plural, poner_texto
 from screens.ruta import nivel_actual
 from data import db
 from data.config import ACTIVIDADES_PARA_DESBLOQUEAR
@@ -16,9 +16,8 @@ import session
 import theme
 
 
-def fecha_corta(iso):
-    d = date.fromisoformat(iso[:10])
-    return f'{d.day} de {MESES[d.month - 1]}'
+class FilaTocable(ButtonBehavior, BoxLayout):
+    pass
 
 
 class Separador(Widget):
@@ -99,7 +98,8 @@ class EvaluacionScreen(Screen):
 
     def _fila(self, s):
         nivel = por_clave(s.get('nivel')) or nivel_de(s['puntaje_global'])
-        fila = ajustar_alto(BoxLayout(spacing=dp(10), padding=[0, dp(6)]))
+        fila = ajustar_alto(FilaTocable(spacing=dp(10), padding=[0, dp(6)]))
+        fila.bind(on_press=lambda *a: App.get_running_app().abrir_neuroscore(s['id'], 'evaluacion'))
         izquierda = ajustar_alto(BoxLayout(orientation='vertical', spacing=dp(2),
                                            pos_hint={'center_y': 0.5}))
         tipo = 'Evaluación inicial' if s.get('tipo') == 'inicial' else 'Clasificatoria'
@@ -118,6 +118,8 @@ class EvaluacionScreen(Screen):
         fila.add_widget(NeoBadge(text=nivel['nombre'], surface=nivel['color'],
                                  size_hint=(None, None), size=(dp(104), dp(24)),
                                  pos_hint={'center_y': 0.5}))
+        fila.add_widget(NeoIcon(icon='volver', marco=False, girado=True, color_glifo=theme.TEXTO_SEC,
+                                size=(dp(18), dp(18)), pos_hint={'center_y': 0.5}))
         return fila
 
     def ir_a_ruta(self):

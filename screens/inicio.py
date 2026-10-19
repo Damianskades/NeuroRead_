@@ -1,7 +1,7 @@
 from datetime import date
 from kivy.uix.screenmanager import Screen
 from kivy.app import App
-from kivy.metrics import sp
+from kivy.metrics import dp, sp
 from kivy.utils import get_hex_from_color
 from screens.common import fecha_larga, plural, poner_texto
 from data import db
@@ -27,6 +27,7 @@ def actividades_faltantes(usuario_id, nivel, fecha):
 
 class InicioScreen(Screen):
     _actividad_en_curso = None
+    _ultima_sesion = None
 
     def on_enter(self):
         self.actualizar()
@@ -40,6 +41,7 @@ class InicioScreen(Screen):
         nivel = nivel_de(puntaje) if ultima else (por_clave(u.get('nivel')) or nivel_de(0))
         self._encabezado(u)
         self._nivel(puntaje, nivel)
+        self._neuroscore(ultima, nivel)
         self._objetivo(ultima)
         self._en_curso(u['id'])
         self._clasificatoria(u['id'], nivel, ultima)
@@ -73,6 +75,19 @@ class InicioScreen(Screen):
         poner_texto(self.ids.ini_faltan,
                     f"Te faltan [b][color={claro}]{plural(faltan, 'punto', 'puntos')}[/color][/b] "
                     f"para llegar a\n{siguiente['nombre']} ({siguiente['minimo']}%)")
+
+    def _neuroscore(self, ultima, nivel):
+        enlace = self.ids.ini_neuroscore
+        self._ultima_sesion = ultima['id'] if ultima else None
+        visible = ultima is not None
+        enlace.color = nivel['color']
+        enlace.opacity = 1 if visible else 0
+        enlace.disabled = not visible
+        enlace.height = dp(48) if visible else 0
+
+    def ver_neuroscore(self):
+        if self._ultima_sesion is not None:
+            App.get_running_app().abrir_neuroscore(self._ultima_sesion, 'inicio')
 
     def _objetivo(self, ultima):
         habilidad = HABILIDADES[habilidad_mas_baja(ultima)]

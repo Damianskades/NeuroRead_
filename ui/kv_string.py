@@ -444,6 +444,11 @@ ScreenManager:
                     text_size: self.width, None
                     size_hint_y: None
                     height: self.texture_size[1]
+                Enlace:
+                    id: ini_neuroscore
+                    text: 'VER MI NEUROSCORE'
+                    halign: 'left'
+                    on_press: root.ver_neuroscore()
             NeoCard:
                 surface: theme.TARJETA
                 radius: dp(18)
@@ -3182,12 +3187,25 @@ ScreenManager:
             pos: self.pos
             size: self.size
     ScrollView:
+        id: res_scroll
         BoxLayout:
             orientation: 'vertical'
             padding: [dp(20), dp(46), dp(20), dp(38)]
             spacing: dp(13)
             size_hint_y: None
             height: self.minimum_height
+            LSec:
+                id: res_consulta
+                text: ''
+                font_size: '13sp'
+                font_name: theme.F_DISPLAY
+                bold: True
+                halign: 'left'
+                valign: 'top'
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1] if self.text else 0
+                opacity: 1 if self.text else 0
             BoxLayout:
                 size_hint_y: None
                 height: self.minimum_height
@@ -3423,6 +3441,7 @@ ScreenManager:
                         text_size: self.width, None
                         size_hint_y: None
                         height: self.texture_size[1]
+                    Widget:
                 NeoCard:
                     id: res_mej_card
                     surface: theme.TARJETA
@@ -3451,6 +3470,7 @@ ScreenManager:
                         text_size: self.width, None
                         size_hint_y: None
                         height: self.texture_size[1]
+                    Widget:
             SectionTitle:
                 text: 'DESGLOSE POR MÓDULO'
             BoxLayout:
@@ -3463,11 +3483,12 @@ ScreenManager:
                 size_hint_y: None
                 height: dp(6)
             NeoButton:
+                id: res_boton
                 text: 'IR A INICIO'
                 surface: theme.MARINO
                 color: theme.TEXTO
                 font_size: '16sp'
                 size_hint_y: None
                 height: dp(60)
-                on_press: app.ir_a_pestana('inicio')
+                on_press: root.salir()
 """
