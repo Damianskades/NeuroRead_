@@ -4,6 +4,7 @@ from kivy.uix.modalview import ModalView
 from kivy.factory import Factory
 from kivy.metrics import dp
 from kivy.app import App
+from kivy.clock import Clock
 from widgets import NeoCard, NeoBar, NeoIcon, NeoBadge, NeoButton
 from screens.common import wrap_label, insignia_diferencia, ajustar_alto, poner_texto
 from screens.ruta import nivel_actual
@@ -117,6 +118,7 @@ class PerfilScreen(Screen):
         ids.perfil_recomendacion.text = nivel['recomendacion']
         self._logros(u['id'])
         ids.perfil_scroll.scroll_y = 1
+        Clock.schedule_once(lambda dt: setattr(ids.perfil_scroll, 'scroll_y', 1), 0)
 
     def _estudiante(self, u, nivel):
         ids = self.ids

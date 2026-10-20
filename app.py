@@ -1,3 +1,7 @@
+import os
+from kivy.config import Config
+Config.set('graphics', 'resizable', False)
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import FadeTransition
@@ -19,10 +23,21 @@ from data.palabras_ricas import contar_riqueza
 from data import db
 import session
 
-try:
-    Window.size = (round(dp(390)), round(dp(844)))
-except Exception:
-    Window.size = (390, 844)
+
+def ajustar_ventana():
+    try:
+        w, h, x, y = (int(v) for v in os.environ['NEUROREAD_VENTANA'].split(','))
+        Window.size = (w, h)
+        Window.left = x
+        Window.top = y
+    except Exception:
+        try:
+            Window.size = (round(dp(390)), round(dp(844)))
+        except Exception:
+            Window.size = (390, 844)
+
+
+ajustar_ventana()
 Window.clearcolor = theme.FONDO
 
 

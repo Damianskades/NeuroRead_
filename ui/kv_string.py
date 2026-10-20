@@ -1947,7 +1947,7 @@ ScreenManager:
                     radius: dp(14)
                     shadow_off: dp(3)
                     orientation: 'vertical'
-                    padding: [dp(8), dp(10)]
+                    padding: [dp(4), dp(10)]
                     spacing: dp(2)
                     id: perfil_c_total
                     LDisplay:
@@ -1976,7 +1976,7 @@ ScreenManager:
                     radius: dp(14)
                     shadow_off: dp(3)
                     orientation: 'vertical'
-                    padding: [dp(8), dp(10)]
+                    padding: [dp(4), dp(10)]
                     spacing: dp(2)
                     id: perfil_c_racha
                     LDisplay:
@@ -2005,7 +2005,7 @@ ScreenManager:
                     radius: dp(14)
                     shadow_off: dp(3)
                     orientation: 'vertical'
-                    padding: [dp(8), dp(10)]
+                    padding: [dp(4), dp(10)]
                     spacing: dp(2)
                     id: perfil_c_mejor
                     LDisplay:

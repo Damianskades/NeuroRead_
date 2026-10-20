@@ -88,3 +88,9 @@ Una base de una versión anterior se convierte sola a estas tablas al abrir la a
 - La aplicación usa Century Gothic: `GOTHICB.TTF` para títulos y `GOTHIC.TTF` para el texto.
 fonts`.
 - Si Century Gothic no está instalada, la aplicación usa Roboto y funciona igual.
+
+## Tamaño de la ventana
+
+- La ventana tiene la proporción de un celular (390 por 844) y se ajusta sola a la pantalla donde se abre: ocupa el 90 % del alto disponible sobre la barra de tareas y se abre centrada.
+- Todo el diseño se escala en la misma proporción, así que se ve igual en una laptop pequeña y en un monitor 4K.
+- La ventana no se puede maximizar ni cambiar de tamaño.
