@@ -2,12 +2,18 @@ import time
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.app import App
-from data.focus import NIVELES, construir_ultra
+from kivy.core.window import Window
+from data import db
+from data.focus import NIVELES, construir_ultra, elegir_items
 import session
 import theme
 
 APROBAR = 4
 PREP_SEG = 6
+
+
+def aviso_tiempo(nivel):
+    return f"{nivel['regla']}  (tienes {nivel['tiempo']:g} s por palabra)"
 
 
 class ConcentracionScreen(Screen):
@@ -16,6 +22,8 @@ class ConcentracionScreen(Screen):
     _ok_nivel = _err_nivel = 0
     _ok_total = _err_total = 0
     _tiempos = []
+    _rapidez = []
+    _elegidas = {}
     _t0 = None
     _deadline = None
     _ev_timer = None
@@ -31,18 +39,46 @@ class ConcentracionScreen(Screen):
         self._nivel_idx = 0
         self._ok_total = self._err_total = 0
         self._tiempos = []
+        self._rapidez = []
         self._ultra_superado = False
         self._nivel_max = 'FACIL'
+        self._elegir_palabras()
         self._ocultar_interstitial()
         self._ocultar_prep()
+        Window.bind(focus=self._cambio_foco, on_minimize=self._salio)
         self._programar(lambda dt: self._cargar_nivel(0), 0.1)
 
     def on_leave(self):
+        Window.unbind(focus=self._cambio_foco, on_minimize=self._salio)
         self._detener_timer()
+        self._borrar_limite()
+        self._t0 = None
         if self._ev_pendiente:
             self._ev_pendiente.cancel()
             self._ev_pendiente = None
         self._detener_prep()
+
+    def _elegir_palabras(self):
+        u = session.usuario
+        usadas = db.palabras_usadas(u['id']) if u else []
+        self._elegidas = {n['clave']: elegir_items(n['clave'], usadas)
+                          for n in NIVELES if n['clave'] != 'ULTRA'}
+
+    def _guardar_palabras(self):
+        u = session.usuario
+        if not u:
+            return
+        db.guardar_palabras_usadas(u['id'], [(clave, item['palabra'])
+                                             for clave, items in self._elegidas.items()
+                                             for item in items])
+
+    def _cambio_foco(self, ventana, enfocada):
+        if not enfocada:
+            self._salio()
+
+    def _salio(self, *a):
+        if self._t0 is not None:
+            self.responder(None, salida=True)
 
     def _programar(self, funcion, espera):
         if self._ev_pendiente:
@@ -62,17 +98,16 @@ class ConcentracionScreen(Screen):
             texto = session.texto_activo['texto'] if session.texto_activo else ''
             self._items = construir_ultra(texto)
         else:
-            self._items = list(nivel['items'])
+            self._items = list(self._elegidas[nivel['clave']])
         self.ids.conc_nivel_badge.text = nivel['nombre']
         self.ids.conc_nivel_badge.surface = nivel['color']
-        self.ids.conc_regla.text = nivel['regla'] + (
-            f"  (tienes {nivel['tiempo']:g}s por palabra)" if nivel['tiempo'] else '')
+        self.ids.conc_regla.text = aviso_tiempo(nivel)
         self.ids.conc_si.text = nivel['si']
         self.ids.conc_no.text = nivel['no']
         self.ids.conc_bar.max = len(self._items)
         self.ids.conc_bar.value = 0
         self.ids.conc_bar.fill = nivel['color']
-        self.ids.conc_timerbar.opacity = 1 if nivel['tiempo'] else 0
+        self.ids.conc_timerbar.opacity = 1
         self.ids.conc_timerbar.value = 0
         self._actualizar_marcadores()
         self._programar(lambda dt: self._mostrar(), 0.2)
@@ -92,13 +127,11 @@ class ConcentracionScreen(Screen):
         self.ids.conc_feedback.text = ''
         self.ids.conc_si.disabled = False
         self.ids.conc_no.disabled = False
+        self._detener_timer()
         self._t0 = time.time()
-        nivel = self._nivel()
-        if nivel['tiempo']:
-            self._deadline = self._t0 + nivel['tiempo']
-            self.ids.conc_timerbar.value = 100
-            self._detener_timer()
-            self._ev_timer = Clock.schedule_interval(self._tick_timer, 0.05)
+        self._deadline = self._t0 + self._nivel()['tiempo']
+        self.ids.conc_timerbar.value = 100
+        self._ev_timer = Clock.schedule_interval(self._tick_timer, 0.05)
 
     def _tick_timer(self, dt):
         if self._deadline is None:
@@ -112,31 +145,42 @@ class ConcentracionScreen(Screen):
 
     def _detener_timer(self):
         if self._ev_timer:
-            Clock.unschedule(self._ev_timer)
+            self._ev_timer.cancel()
             self._ev_timer = None
+
+    def _borrar_limite(self):
         self._deadline = None
 
-    def responder(self, es_si):
+    def responder(self, es_si, salida=False):
         if self._t0 is None:
             return
         t = time.time() - self._t0
+        limite = self._nivel()['tiempo']
         self._t0 = None
         self._detener_timer()
-        self._tiempos.append(min(t, self._nivel()['tiempo'] or t))
+        self._borrar_limite()
+        self._tiempos.append(min(t, limite))
         item = self._items[self._idx]
         self.ids.conc_si.disabled = True
         self.ids.conc_no.disabled = True
-        if es_si is None:
+        if salida:
+            self._err_nivel += 1
+            self._err_total += 1
+            self.ids.conc_feedback.text = 'Saliste de la evaluación'
+            self.ids.conc_feedback.color = theme.ROJO
+        elif es_si is None or t > limite:
             self._err_nivel += 1
             self._err_total += 1
             self.ids.conc_feedback.text = '¡Tiempo agotado!'
             self.ids.conc_feedback.color = theme.ROJO
         elif es_si == item['ok']:
+            self._rapidez.append(max(0.0, 1 - t / limite))
             self._ok_nivel += 1
             self._ok_total += 1
             self.ids.conc_feedback.text = f'Correcto ({t:.2f}s)'
             self.ids.conc_feedback.color = theme.VERDE
         else:
+            self._rapidez.append(max(0.0, 1 - t / limite))
             self._err_nivel += 1
             self._err_total += 1
             self.ids.conc_feedback.text = f'Error ({t:.2f}s)'
@@ -147,6 +191,7 @@ class ConcentracionScreen(Screen):
 
     def _fin_nivel(self):
         self._detener_timer()
+        self._borrar_limite()
         self.ids.conc_bar.value = len(self._items)
         nivel = self._nivel()
         paso = self._ok_nivel >= APROBAR
@@ -199,8 +244,7 @@ class ConcentracionScreen(Screen):
         nivel = NIVELES[self._siguiente_nivel]
         self.ids.conc_prep_nombre.text = nivel['nombre']
         self.ids.conc_prep_nombre.color = nivel['color']
-        self.ids.conc_prep_regla.text = nivel['regla'] + (
-            f"  (tienes {nivel['tiempo']:g}s por palabra)" if nivel['tiempo'] else '')
+        self.ids.conc_prep_regla.text = aviso_tiempo(nivel)
         self.ids.conc_prep_bar.fill = nivel['color']
         self.ids.conc_prep_bar.value = 0
         self.ids.conc_prep_count.text = str(PREP_SEG)
@@ -233,11 +277,14 @@ class ConcentracionScreen(Screen):
     def _terminar(self):
         total = self._ok_total + self._err_total
         t_prom = sum(self._tiempos) / len(self._tiempos) if self._tiempos else 0
+        rapidez = sum(self._rapidez) / len(self._rapidez) if self._rapidez else 0.0
+        self._guardar_palabras()
         session.session['concentracion'].update({
             'aciertos': self._ok_total,
             'errores': self._err_total,
             'total': total,
             'tiempo_promedio': round(t_prom, 2),
+            'rapidez': round(rapidez, 4),
             'nivel_max': self._nivel_max,
             'ultra_superado': self._ultra_superado,
         })

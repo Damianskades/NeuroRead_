@@ -62,6 +62,14 @@ MIGRACION = [
     ('actividad_en_curso', 'tblActividadEnCurso', EN_CURSO),
 ]
 
+PALABRAS = {
+    'id': 'id_palabraUsada',
+    'usuario_id': 'id_usuario',
+    'nivel': 'pal_nivel',
+    'palabra': 'pal_palabra',
+    'fecha': 'pal_fecha',
+}
+
 PUBLICOS_USUARIO = ['id', 'nombre_usuario', 'nombre', 'apellido', 'grado', 'correo', 'nivel',
                     'evaluacion_inicial', 'estado', 'creado', 'actualizado']
 
@@ -127,6 +135,13 @@ ESQUEMA = [
         aec_respuestas  TEXT,
         aec_actualizado TEXT NOT NULL,
         PRIMARY KEY (id_usuario, aec_actividadId)
+    )""",
+    """CREATE TABLE IF NOT EXISTS tblPalabrasUsadas (
+        id_palabraUsada INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_usuario      INTEGER NOT NULL REFERENCES tblUsuarios(id_usuario),
+        pal_nivel       TEXT NOT NULL,
+        pal_palabra     TEXT NOT NULL,
+        pal_fecha       TEXT NOT NULL
     )""",
 ]
 
@@ -410,7 +425,7 @@ def eliminar_usuario(usuario_id, password):
             return False, 'El usuario no existe.'
         if not _verificar(fila, password):
             return False, 'La contraseña no es correcta.'
-        for tabla in ('tblActividadEnCurso', 'tblActividadesCompletadas',
+        for tabla in ('tblPalabrasUsadas', 'tblActividadEnCurso', 'tblActividadesCompletadas',
                       'tblCapitulosLeidos', 'tblSesiones', 'tblUsuarios'):
             con.execute(f'DELETE FROM {tabla} WHERE id_usuario = ?', (usuario_id,))
     return True, None
@@ -620,6 +635,22 @@ def borrar_actividad_en_curso(usuario_id, actividad_id=None):
         else:
             con.execute('DELETE FROM tblActividadEnCurso WHERE id_usuario = ? '
                         'AND aec_actividadId = ?', (usuario_id, actividad_id))
+
+
+def guardar_palabras_usadas(usuario_id, palabras):
+    fecha = _ahora_fino()
+    with _db() as con:
+        con.executemany(
+            'INSERT INTO tblPalabrasUsadas (id_usuario, pal_nivel, pal_palabra, pal_fecha) '
+            'VALUES (?, ?, ?, ?)', [(usuario_id, nivel, palabra, fecha) for nivel, palabra in palabras])
+    return fecha
+
+
+def palabras_usadas(usuario_id):
+    with _db() as con:
+        filas = con.execute('SELECT * FROM tblPalabrasUsadas WHERE id_usuario = ? '
+                            'ORDER BY pal_fecha DESC, id_palabraUsada', (usuario_id,)).fetchall()
+    return [_a_app(f, PALABRAS) for f in filas]
 
 
 def respaldar_db():

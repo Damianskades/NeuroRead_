@@ -40,7 +40,7 @@ def _make_session():
         'interpretacion': {'puntaje': 0, 'palabras_total': 0},
         'imaginacion':   {'puntaje': 0, 'palabras': 0, 'riqueza': 0},
         'concentracion': {'aciertos': 0, 'errores': 0, 'total': 0,
-                          'tiempo_promedio': 0, 'nivel_max': 'FACIL',
+                          'tiempo_promedio': 0, 'rapidez': 0.0, 'nivel_max': 'FACIL',
                           'ultra_superado': False},
         'retencion':     {'correctas': 0,
                           'total': len(texto_activo['retencion_q'])},

@@ -10,16 +10,8 @@ NIVELES = [
         'regla': 'Toca SÍ cuando la palabra sea un ANIMAL',
         'si': 'SÍ, ES ANIMAL',
         'no': 'NO ES',
-        'tiempo': 0,
+        'tiempo': 7,
         'color': theme.VERDE,
-        'items': [
-            {'palabra': 'Delfín',    'ok': True},
-            {'palabra': 'Orquídea',  'ok': False},
-            {'palabra': 'Jaguar',    'ok': True},
-            {'palabra': 'Montaña',   'ok': False},
-            {'palabra': 'Colibrí',   'ok': True},
-            {'palabra': 'Relámpago', 'ok': False},
-        ],
     },
     {
         'clave': 'NORMAL',
@@ -27,16 +19,8 @@ NIVELES = [
         'regla': 'Toca SÍ cuando la palabra sea un COLOR',
         'si': 'SÍ, ES COLOR',
         'no': 'NO ES',
-        'tiempo': 4,
+        'tiempo': 7,
         'color': theme.DORADO,
-        'items': [
-            {'palabra': 'Turquesa', 'ok': True},
-            {'palabra': 'Trueno',   'ok': False},
-            {'palabra': 'Naranja',  'ok': True},
-            {'palabra': 'Granizo',  'ok': False},
-            {'palabra': 'Violeta',  'ok': True},
-            {'palabra': 'Carmesí',  'ok': True},
-        ],
     },
     {
         'clave': 'DIFICIL',
@@ -44,16 +28,8 @@ NIVELES = [
         'regla': 'Toca SÍ cuando la palabra esté escrita CORRECTAMENTE',
         'si': 'SÍ, CORRECTA',
         'no': 'TIENE ERROR',
-        'tiempo': 3,
+        'tiempo': 6,
         'color': theme.NARANJA,
-        'items': [
-            {'palabra': 'Bibloteca',   'ok': False},
-            {'palabra': 'Esperanza',   'ok': True},
-            {'palabra': 'Concentración', 'ok': True},
-            {'palabra': 'Imajinación', 'ok': False},
-            {'palabra': 'Murciélago',  'ok': True},
-            {'palabra': 'Exelente',    'ok': False},
-        ],
     },
     {
         'clave': 'ULTRA',
@@ -63,9 +39,91 @@ NIVELES = [
         'no': 'NO APARECE',
         'tiempo': 2,
         'color': theme.ROJO,
-        'items': [],
     },
 ]
+
+PALABRAS_POR_NIVEL = 6
+EVALUACIONES_SIN_REPETIR = 3
+
+BANCOS = {
+    'FACIL': {
+        'si': [
+            'Delfín', 'Colibrí', 'Ballena', 'Tortuga', 'Elefante', 'Ardilla', 'Conejo', 'Pingüino',
+            'Búho', 'Loro', 'Tiburón', 'Hormiga', 'Abeja', 'Rana', 'Sapo', 'Caracol', 'Tucán',
+            'Pelícano', 'Gaviota', 'Halcón', 'Cóndor', 'Vicuña', 'Armadillo', 'Mapache', 'Nutria',
+            'Castor', 'Erizo', 'Hiena', 'Leopardo', 'Guepardo', 'Chimpancé', 'Gorila', 'Avestruz',
+            'Escorpión', 'Cangrejo', 'Ciervo', 'Cisne', 'Grillo', 'Mosquito', 'Lombriz', 'Tapir',
+            'Koala', 'Hipopótamo', 'Rinoceronte', 'Lagartija', 'Iguana', 'Lobo', 'Oso',
+        ],
+        'no': [
+            'Orquídea', 'Montaña', 'Relámpago', 'Girasol', 'Roble', 'Cactus', 'Helecho', 'Bambú',
+            'Tulipán', 'Pino', 'Cedro', 'Sauce', 'Musgo', 'Trigo', 'Volcán', 'Glaciar', 'Desierto',
+            'Bosque', 'Playa', 'Isla', 'Río', 'Lago', 'Cascada', 'Valle', 'Pradera', 'Tormenta',
+            'Arcoíris', 'Niebla', 'Huracán', 'Terremoto', 'Eclipse', 'Brújula', 'Lámpara', 'Mochila',
+            'Tijeras', 'Escalera', 'Paraguas', 'Martillo', 'Linterna', 'Botella', 'Guitarra',
+            'Castillo', 'Museo', 'Mercado', 'Faro', 'Plaza',
+        ],
+    },
+    'NORMAL': {
+        'si': [
+            'Rojo', 'Azul', 'Verde', 'Amarillo', 'Negro', 'Blanco', 'Gris', 'Morado', 'Púrpura',
+            'Marrón', 'Celeste', 'Magenta', 'Cian', 'Carmesí', 'Escarlata', 'Beige', 'Bermejo',
+            'Pardo', 'Cárdeno', 'Rojizo', 'Azulado', 'Verdoso', 'Amarillento', 'Grisáceo',
+            'Blanquecino', 'Negruzco', 'Azul marino', 'Verde claro', 'Gris oscuro', 'Azul cielo',
+            'Rojo oscuro', 'Verde oscuro', 'Azul claro',
+        ],
+        'no': [
+            'Trueno', 'Granizo', 'Nube', 'Viento', 'Brisa', 'Escuela', 'Cuchara', 'Tenedor',
+            'Cortina', 'Teclado', 'Ventana', 'Puerta', 'Camino', 'Ciudad', 'Pueblo', 'Mesa', 'Silla',
+            'Reloj', 'Espejo', 'Llave', 'Cuerda', 'Sombrero', 'Zapatilla', 'Pelota', 'Bandera',
+            'Periódico', 'Carta', 'Libro', 'Tren', 'Barco', 'Cohete', 'Planeta', 'Estrella', 'Luna',
+            'Trompeta', 'Violín', 'Tambor', 'Domingo', 'Verano', 'Invierno', 'Martes', 'Hospital',
+            'Estadio',
+        ],
+    },
+    'DIFICIL': {
+        'si': [
+            'Esperanza', 'Concentración', 'Vocabulario', 'Bicicleta', 'Gobierno', 'Excursión',
+            'Herramienta', 'Exhibición', 'Vehículo', 'Hipótesis', 'Conciencia', 'Ejército',
+            'Geografía', 'Biología', 'Jengibre', 'Hierba', 'Llovizna', 'Ayuntamiento', 'Cerebro',
+            'Ciudadano', 'Cocinero', 'Desarrollo', 'Escalofrío', 'Explosión', 'Garabato',
+            'Helicóptero', 'Horizonte', 'Inteligencia', 'Lenguaje', 'Majestuoso', 'Nostalgia',
+            'Obstáculo', 'Proyecto', 'Silencio', 'Tecnología', 'Universidad', 'Valiente',
+            'Zanahoria', 'Adolescente', 'Bienvenido', 'Columpio', 'Avellana',
+        ],
+        'no': [
+            'Bibloteca', 'Imajinación', 'Exelente', 'Abión', 'Berdad', 'Nuve', 'Cavallo', 'Uevo',
+            'Ielo', 'Aorro', 'Ormiga', 'Holer', 'Ermano', 'Almoada', 'Sapato', 'Ceresa', 'Cosina',
+            'Pasiencia', 'Lápis', 'Asúcar', 'Siencia', 'Felisidad', 'Naris', 'Garage', 'Mensage',
+            'Viage', 'Jeneral', 'Jigante', 'Extrangero', 'Yuvia', 'Ceboya', 'Caye', 'Pallaso',
+            'Desalluno', 'Mounstro', 'Poblema', 'Instrución', 'Dicionario', 'Construción',
+            'Bivir', 'Volígrafo', 'Escrivir', 'Becino', 'Uella',
+        ],
+    },
+}
+
+
+def elegir_items(clave, usadas, rng=random):
+    banco = BANCOS[clave]
+    propias = [u for u in usadas if u['nivel'] == clave]
+    fechas = sorted({u['fecha'] for u in usadas}, reverse=True)[:EVALUACIONES_SIN_REPETIR]
+    recientes = {u['palabra'] for u in propias if u['fecha'] in fechas}
+    ultimo_uso = {}
+    for u in propias:
+        ultimo_uso[u['palabra']] = max(ultimo_uso.get(u['palabra'], ''), u['fecha'])
+
+    def tomar(lista, cantidad):
+        libres = [p for p in lista if p not in recientes]
+        rng.shuffle(libres)
+        repetidas = sorted((p for p in lista if p in recientes), key=lambda p: ultimo_uso.get(p, ''))
+        return (libres + repetidas)[:cantidad]
+
+    correctas = rng.choice((3, 4))
+    items = [{'palabra': p, 'ok': True} for p in tomar(banco['si'], correctas)]
+    items += [{'palabra': p, 'ok': False} for p in tomar(banco['no'], PALABRAS_POR_NIVEL - correctas)]
+    rng.shuffle(items)
+    return items
+
 
 ULTRA_DISTRACTORES = ['Volcán', 'Brújula', 'Cometa', 'Laberinto',
                       'Pergamino', 'Molino', 'Glaciar', 'Tambor']

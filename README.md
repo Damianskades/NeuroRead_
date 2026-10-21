@@ -74,6 +74,17 @@ Para empezar desde cero con una base limpia:
 
 Convención: las tablas llevan el prefijo tbl, la llave primaria se llama id_ más la entidad, las llaves foráneas repiten el nombre de la llave a la que apuntan y los demás campos empiezan con las siglas de su tabla.
 
+### tblPalabrasUsadas (siglas pal)
+
+Palabras que se mostraron a cada estudiante en NeuroFocus. Sirve para no repetirlas en sus 3 evaluaciones siguientes.
+
+| Campo | Tipo | Descripción |
+| --- | --- | --- |
+| `id_palabraUsada` | INTEGER | Llave primaria autoincremental. |
+| `id_usuario` | INTEGER | Estudiante que vio la palabra. |
+| `pal_nivel` | TEXT | Nivel de NeuroFocus (FACIL, NORMAL o DIFICIL). |
+| `pal_palabra` | TEXT | Palabra mostrada. |
+| `pal_fecha` | TEXT | Fecha y hora de la evaluación. Todas las palabras de una misma evaluación comparten esta fecha. |
 
 ### Relaciones (OJO BASE DE DATOS NO RELACIONAL)
 
@@ -81,6 +92,7 @@ Convención: las tablas llevan el prefijo tbl, la llave primaria se llama id_ m�
 - `tblCapitulosLeidos.id_usuario` apunta a `tblUsuarios.id_usuario`
 - `tblActividadesCompletadas.id_usuario` apunta a `tblUsuarios.id_usuario`
 - `tblActividadEnCurso.id_usuario` apunta a `tblUsuarios.id_usuario`
+- `tblPalabrasUsadas.id_usuario` apunta a `tblUsuarios.id_usuario`
 
 Una base de una versión anterior se convierte sola a estas tablas al abrir la aplicación, conservando los mismos identificadores. Antes de convertirla se guarda una copia en `backups`.
 

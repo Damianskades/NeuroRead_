@@ -53,7 +53,7 @@ def calcular_porcentajes(s):
         conc = 0.0
     else:
         acc = c['aciertos'] / c['total']
-        rapidez = max(0.0, min((2.0 - c['tiempo_promedio']) / 2.0, 1.0))
+        rapidez = max(0.0, min(c.get('rapidez', 0.0), 1.0))
         bono = 10 if c['ultra_superado'] else (6 if c['nivel_max'] == 'ULTRA' else 0)
         conc = min(acc * 70 + rapidez * 20 + bono, 100)
     ret = _proporcion(s['retencion']) * 100
