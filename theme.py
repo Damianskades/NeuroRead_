@@ -1,6 +1,7 @@
 import os
 from kivy.utils import get_color_from_hex as H
 from kivy.core.text import LabelBase
+from kivy.utils import platform
 
 FONDO        = H('#211A14')
 TARJETA      = H('#2E251D')
@@ -39,11 +40,12 @@ MODULE_COLORS_CODE = {
 }
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
-_CARPETAS = [
-    os.path.join(_BASE, 'assets', 'fonts'),
-    'C:/Windows/Fonts',
-    os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Microsoft', 'Windows', 'Fonts'),
-]
+_CARPETAS = [os.path.join(_BASE, 'assets', 'fonts')]
+if platform == 'win':
+    _CARPETAS += [
+        'C:/Windows/Fonts',
+        os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Microsoft', 'Windows', 'Fonts'),
+    ]
 
 F_DISPLAY = 'Roboto'
 F_BODY = 'Roboto'
@@ -65,6 +67,12 @@ try:
     if _gothic_bold:
         LabelBase.register(name='NeoDisplay', fn_regular=_gothic_bold)
         F_DISPLAY = 'NeoDisplay'
+    else:
+        from kivy.resources import resource_find
+        _roboto_bold = resource_find('data/fonts/Roboto-Bold.ttf')
+        if _roboto_bold:
+            LabelBase.register(name='NeoDisplay', fn_regular=_roboto_bold)
+            F_DISPLAY = 'NeoDisplay'
     if _gothic_reg:
         LabelBase.register(name='NeoBody', fn_regular=_gothic_reg,
                            fn_bold=_gothic_bold or _gothic_reg)

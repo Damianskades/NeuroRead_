@@ -2,8 +2,10 @@ import random
 import re
 from datetime import date
 from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.modalview import ModalView
 from kivy.metrics import dp, sp
-from widgets import NeoChip
+from widgets import NeoChip, NeoCard, NeoButton
 import theme
 
 DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -122,3 +124,31 @@ def insignia_diferencia(d):
     if d < 0:
         return f'BAJASTE {-d} {puntos}', theme.ROJO, theme.TEXTO
     return 'SIN CAMBIOS', theme.TARJETA_ALT, theme.TEXTO
+
+
+class ModalSalir(ModalView):
+    def __init__(self, al_salir, **kw):
+        kw.setdefault('size_hint', (None, None))
+        kw.setdefault('width', dp(320))
+        kw.setdefault('background', '')
+        kw.setdefault('background_color', theme.TRANSPARENTE)
+        kw.setdefault('overlay_color', theme.VELO)
+        kw.setdefault('auto_dismiss', False)
+        super().__init__(**kw)
+        tarjeta = NeoCard(orientation='vertical', surface=theme.TARJETA, radius=dp(18),
+                          padding=[dp(20), dp(18)], spacing=dp(16), size_hint_y=None)
+        tarjeta.bind(minimum_height=tarjeta.setter('height'))
+        titulo = wrap_label('¿Quieres salir de NeuroRead?', font_size='18sp', color=theme.TEXTO)
+        titulo.font_name = theme.F_DISPLAY
+        tarjeta.add_widget(titulo)
+        botones = BoxLayout(size_hint_y=None, height=dp(52), spacing=dp(12))
+        salir = NeoButton(text='SALIR', surface=theme.ROJO, color=theme.TEXTO, font_size='14sp')
+        salir.bind(on_press=lambda *a: (self.dismiss(), al_salir()))
+        cancelar = NeoButton(text='CANCELAR', surface=theme.TARJETA_ALT, color=theme.TEXTO,
+                             font_size='14sp')
+        cancelar.bind(on_press=lambda *a: self.dismiss())
+        botones.add_widget(salir)
+        botones.add_widget(cancelar)
+        tarjeta.add_widget(botones)
+        tarjeta.bind(height=lambda w, h: setattr(self, 'height', h))
+        self.add_widget(tarjeta)

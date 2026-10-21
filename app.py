@@ -1,6 +1,8 @@
 import os
+from kivy.utils import platform
 from kivy.config import Config
-Config.set('graphics', 'resizable', False)
+if platform == 'win':
+    Config.set('graphics', 'resizable', False)
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -19,9 +21,13 @@ from screens import (
     InterpretacionScreen, ImaginacionScreen, ConcentracionScreen,
     RetencionScreen, ResultadosScreen, PerfilScreen, EditarPerfilScreen
 )
+from screens.common import ModalSalir
 from data.palabras_ricas import contar_riqueza
 from data import db
 import session
+
+PANTALLAS_EVALUACION = {'splash', 'bienvenida_evaluacion', 'velocidad', 'comprension',
+                        'interpretacion', 'imaginacion', 'concentracion', 'retencion'}
 
 
 def ajustar_ventana():
@@ -37,17 +43,70 @@ def ajustar_ventana():
             Window.size = (390, 844)
 
 
-ajustar_ventana()
+if platform == 'win':
+    ajustar_ventana()
 Window.clearcolor = theme.FONDO
 
 
 class NeuroReadApp(App):
     title = 'NeuroRead'
 
+    _modal_salir = None
+
     def build(self):
         db.respaldar_db()
         db.init_db()
         return Builder.load_string(KV)
+
+    def on_start(self):
+        if platform == 'android':
+            Window.softinput_mode = 'below_target'
+            Window.bind(on_keyboard=self.tecla)
+
+    def on_pause(self):
+        pantalla = self.root.current_screen if self.root else None
+        if hasattr(pantalla, 'al_pausar'):
+            pantalla.al_pausar()
+        return True
+
+    def on_resume(self):
+        pass
+
+    def tecla(self, ventana, tecla, *args):
+        if tecla != 27:
+            return False
+        self.atras()
+        return True
+
+    def atras(self):
+        if self._modal_salir is not None:
+            self._modal_salir.dismiss()
+            return
+        actual = self.root.current
+        if actual in ('login', 'registro'):
+            self.stop()
+        elif actual in PANTALLAS_EVALUACION:
+            return
+        elif actual in ('lector', 'actividad'):
+            self.root.get_screen(actual).volver()
+        elif actual == 'editar_perfil':
+            self.root.get_screen(actual).cancelar()
+        elif actual == 'resultados':
+            self.root.get_screen(actual).salir()
+        elif actual == 'principal':
+            interna = self.root.get_screen('principal').ids.principal_sm
+            if interna.current == 'libro_detalle':
+                interna.get_screen('libro_detalle').volver()
+            elif interna.current != 'inicio':
+                self.ir_a_pestana('inicio')
+            else:
+                self._preguntar_salida()
+
+    def _preguntar_salida(self):
+        modal = ModalSalir(self.stop)
+        modal.bind(on_dismiss=lambda *a: setattr(self, '_modal_salir', None))
+        self._modal_salir = modal
+        modal.open()
 
     def login_entrar(self):
         self.root.get_screen('login').entrar()

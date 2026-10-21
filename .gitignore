@@ -5,3 +5,5 @@ __pycache__/
 backups/
 *.db
 .vscode/
+.buildozer/
+bin/

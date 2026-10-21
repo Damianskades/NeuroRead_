@@ -80,6 +80,9 @@ class ConcentracionScreen(Screen):
         if self._t0 is not None:
             self.responder(None, salida=True)
 
+    def al_pausar(self):
+        self._salio()
+
     def _programar(self, funcion, espera):
         if self._ev_pendiente:
             self._ev_pendiente.cancel()

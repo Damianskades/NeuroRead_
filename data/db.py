@@ -10,9 +10,32 @@ from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 
 _BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(_BASE, 'neuroread.db')
-BACKUP_DIR = os.path.join(_BASE, 'backups')
+DB_PATH = None
+BACKUP_DIR = None
 BACKUPS_MAXIMOS = 5
+
+
+def _carpeta_datos():
+    from kivy.utils import platform
+    if platform != 'android':
+        return _BASE
+    try:
+        from kivy.app import App
+        app = App.get_running_app()
+        if app is not None and app.user_data_dir:
+            return app.user_data_dir
+    except Exception:
+        pass
+    from android.storage import app_storage_path
+    return app_storage_path()
+
+
+def ruta_db():
+    return DB_PATH or os.path.join(_carpeta_datos(), 'neuroread.db')
+
+
+def carpeta_backups():
+    return BACKUP_DIR or os.path.join(_carpeta_datos(), 'backups')
 
 ITERACIONES = 200000
 
@@ -179,7 +202,7 @@ def _ahora_fino():
 
 
 def _conn():
-    con = sqlite3.connect(DB_PATH)
+    con = sqlite3.connect(ruta_db())
     con.row_factory = sqlite3.Row
     con.execute('PRAGMA foreign_keys = ON')
     return con
@@ -290,7 +313,7 @@ def _migrar_a_tbl(con):
 
 
 def init_db():
-    con = sqlite3.connect(DB_PATH, isolation_level=None)
+    con = sqlite3.connect(ruta_db(), isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
         tablas = _tablas(con)
@@ -654,14 +677,16 @@ def palabras_usadas(usuario_id):
 
 
 def respaldar_db():
-    if not os.path.isfile(DB_PATH):
+    origen = ruta_db()
+    if not os.path.isfile(origen):
         return None
     try:
-        os.makedirs(BACKUP_DIR, exist_ok=True)
+        carpeta = carpeta_backups()
+        os.makedirs(carpeta, exist_ok=True)
         marca = datetime.now().strftime('%Y%m%d_%H%M%S')
-        destino = os.path.join(BACKUP_DIR, f'neuroread_{marca}.db')
-        shutil.copy2(DB_PATH, destino)
-        copias = sorted(glob.glob(os.path.join(BACKUP_DIR, 'neuroread_*.db')))
+        destino = os.path.join(carpeta, f'neuroread_{marca}.db')
+        shutil.copy2(origen, destino)
+        copias = sorted(glob.glob(os.path.join(carpeta, 'neuroread_*.db')))
         for vieja in copias[:-BACKUPS_MAXIMOS]:
             os.remove(vieja)
         return destino
