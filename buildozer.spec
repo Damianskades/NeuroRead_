@@ -28,7 +28,7 @@ source.exclude_dirs = .venv,venv,backups,bin,.buildozer,.git,.vscode,.claude,__p
 version = 0.1
 
 # (list) Application requirements
-requirements = python3,kivy==2.3.1
+requirements = python3,kivy==2.3.1,filetype
 
 # (str) Icon of the application
 #icon.filename = %(source.dir)s/assets/icono.png
