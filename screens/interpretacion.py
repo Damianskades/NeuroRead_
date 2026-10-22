@@ -1,8 +1,10 @@
 from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from data.validacion import analizar_redaccion
+from screens.common import actualizar_contador, mostrar_aviso
 import session
-import theme
+
+MIN_PALABRAS = 10
 
 
 class InterpretacionScreen(Screen):
@@ -27,15 +29,17 @@ class InterpretacionScreen(Screen):
         self.ids.inter_bar.value = self._idx
         self.ids.inter_prog.text = f'Pregunta {self._idx + 1} de {len(preguntas)}'
         self.ids.inter_input.text = ''
-        self.ids.inter_count_lbl.text = '0 palabras'
-        self.ids.inter_count_lbl.color = theme.NARANJA
+        mostrar_aviso(self.ids.inter_aviso, '')
+        self.contar('')
+
+    def contar(self, texto):
+        actualizar_contador(self.ids.inter_count_lbl, texto, MIN_PALABRAS)
 
     def siguiente(self):
         texto = self.ids.inter_input.text
-        ok, msg, palabras = analizar_redaccion(texto, min_palabras=10)
+        ok, msg, palabras = analizar_redaccion(texto, min_palabras=MIN_PALABRAS)
         if not ok:
-            self.ids.inter_count_lbl.text = msg
-            self.ids.inter_count_lbl.color = theme.ROJO
+            mostrar_aviso(self.ids.inter_aviso, msg)
             return
         self._palabras_total += palabras
         self._puntaje += min(palabras / 30, 1.0)

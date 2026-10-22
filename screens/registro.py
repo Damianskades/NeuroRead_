@@ -3,6 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from kivy.metrics import dp
 from widgets import NeoChip
+from screens.common import mostrar_aviso
 from data import db
 from data.config import GRADOS
 import session
@@ -101,8 +102,8 @@ class RegistroScreen(SelectorGrado, Screen):
             nuevo_id, error = db.crear_usuario(usuario, nombre, apellido, self._grado,
                                                correo, clave)
         if error:
-            ids.reg_error.text = error
             ids.reg_error.color = theme.ROJO
+            mostrar_aviso(ids.reg_error, error, ids.reg_scroll)
             return
         ids.reg_error.text = ''
         session.usuario = db.obtener_usuario(nuevo_id)

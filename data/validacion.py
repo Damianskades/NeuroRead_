@@ -2,8 +2,16 @@ import re
 from collections import Counter
 
 
+def _tokens(texto):
+    return re.findall(r"[a-záéíóúüñ]+", texto.lower())
+
+
+def contar_palabras(texto):
+    return len(_tokens(texto))
+
+
 def analizar_redaccion(texto, min_palabras=10):
-    tokens = re.findall(r"[a-záéíóúüñ]+", texto.lower())
+    tokens = _tokens(texto)
     total = len(tokens)
     if total == 0:
         return False, 'Escribe tu respuesta para continuar.', 0

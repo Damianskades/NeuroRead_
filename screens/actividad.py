@@ -6,7 +6,8 @@ from kivy.metrics import dp
 from kivy.app import App
 from kivy.clock import Clock
 from widgets import NeoChip, NeoButton
-from screens.common import option_chip, marcar_opciones, wrap_label
+from screens.common import (option_chip, marcar_opciones, wrap_label, actualizar_contador,
+                            mostrar_aviso)
 from data import db
 from data.actividades import por_id
 from data.libros import libro_por_id
@@ -233,30 +234,28 @@ class ActividadScreen(Screen):
 
     def _armar_escrita(self, paso):
         zona = self.ids.act_zona
+        minimo = paso['min_palabras']
+        aviso = wrap_label('', font_size='13sp', color=theme.ROJO, bold=True)
+        contador = wrap_label('', font_size='13sp', color=theme.TEXTO_SEC)
         campo = Factory.CampoTextoLargo(hint_text='Escribe tu respuesta aquí...')
-        contador = wrap_label(f"0 palabras. Mínimo {paso['min_palabras']}.",
-                              font_size='13sp', color=theme.TEXTO_SEC)
-
-        def contar(inst, texto):
-            n = len(texto.split())
-            contador.text = f"{n} palabras. Mínimo {paso['min_palabras']}."
-        campo.bind(text=contar)
+        campo.bind(text=lambda inst, texto: actualizar_contador(contador, texto, minimo))
+        actualizar_contador(contador, '', minimo)
         comprobar = NeoButton(text='COMPROBAR', surface=theme.VERDE,
                               color=theme.TEXTO_OSCURO, font_size='14sp',
                               size_hint_y=None, height=dp(52))
-        comprobar.bind(on_press=lambda *a: self._comprobar_escrita(campo, comprobar))
-        zona.add_widget(campo)
-        zona.add_widget(contador)
-        zona.add_widget(comprobar)
+        comprobar.bind(on_press=lambda *a: self._comprobar_escrita(campo, comprobar, aviso))
+        for widget in (aviso, contador, campo, comprobar):
+            zona.add_widget(widget)
 
-    def _comprobar_escrita(self, campo, boton):
+    def _comprobar_escrita(self, campo, boton, aviso):
         if self._respondido:
             return
         paso = self._actividad['pasos'][len(self._respuestas)]
         ok, msg, _ = analizar_redaccion(campo.text, min_palabras=paso['min_palabras'])
         if not ok:
-            self._feedback(msg, False)
+            mostrar_aviso(aviso, msg, self.ids.act_scroll)
             return
+        mostrar_aviso(aviso, '')
         campo.readonly = True
         boton.disabled = True
         boton.opacity = 0.5

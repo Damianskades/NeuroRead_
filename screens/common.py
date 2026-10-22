@@ -5,7 +5,9 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.modalview import ModalView
 from kivy.metrics import dp, sp
+from kivy.clock import Clock
 from widgets import NeoChip, NeoCard, NeoButton
+from data.validacion import contar_palabras
 import theme
 
 DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -109,6 +111,19 @@ def wrap_label(texto, font_size='13sp', color=None, bold=False, halign='left'):
     lbl.bind(width=lambda l, w: setattr(l, 'text_size', (w, None)))
     lbl.bind(texture_size=lambda l, ts: setattr(l, 'height', ts[1]))
     return lbl
+
+
+def actualizar_contador(etiqueta, texto, minimo=None):
+    n = contar_palabras(texto)
+    etiqueta.text = plural(n, 'palabra', 'palabras') + (f' de {minimo} mínimas' if minimo else '')
+    etiqueta.color = theme.VERDE if minimo and n >= minimo else theme.TEXTO_SEC
+    return n
+
+
+def mostrar_aviso(etiqueta, mensaje, scroll=None):
+    etiqueta.text = mensaje
+    if mensaje and scroll is not None:
+        Clock.schedule_once(lambda dt: scroll.scroll_to(etiqueta, padding=dp(24)), 0.1)
 
 
 def ajustar_alto(caja):

@@ -22,7 +22,6 @@ from screens import (
     RetencionScreen, ResultadosScreen, PerfilScreen, EditarPerfilScreen
 )
 from screens.common import ModalSalir
-from data.palabras_ricas import contar_riqueza
 from data import db
 import session
 
@@ -146,23 +145,8 @@ class NeuroReadApp(App):
     def vel_terminar(self):
         self.root.get_screen('velocidad').terminar()
 
-    def inter_count(self, text):
-        s = self.root.get_screen('interpretacion')
-        n = len(text.split()) if text.strip() else 0
-        s.ids.inter_count_lbl.text = f'{n} palabras'
-        s.ids.inter_count_lbl.color = theme.VERDE if n >= 10 else theme.NARANJA
-
     def inter_siguiente(self):
         self.root.get_screen('interpretacion').siguiente()
-
-    def imag_count(self, text):
-        s = self.root.get_screen('imaginacion')
-        words = len(text.split()) if text.strip() else 0
-        r = contar_riqueza(text)
-        s.ids.imag_count_lbl.text = f'{words} palabras'
-        s.ids.imag_count_lbl.color = theme.VERDE if words >= 10 else theme.TURQUESA
-        nivel = '--' if r == 0 else ('Básica' if r <= 2 else ('Media' if r <= 5 else 'Alta'))
-        s.ids.imag_riqueza_lbl.text = f'Riqueza: {nivel}'
 
     def imag_guardar(self):
         self.root.get_screen('imaginacion').guardar()

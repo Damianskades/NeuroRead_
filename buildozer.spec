@@ -22,7 +22,7 @@ source.include_exts = py,png,jpg,txt,ttf,kv
 source.include_patterns = assets/*,data/libros/*
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-source.exclude_dirs = .venv,venv,backups,bin,.buildozer,.git,.vscode,.claude,__pycache__
+source.exclude_dirs = .venv,venv,backups,bin,.buildozer,.git,.vscode,.claude,__pycache__,diseno,herramientas
 
 # (str) Application versioning (method 1)
 version = 0.1
@@ -31,10 +31,13 @@ version = 0.1
 requirements = python3,kivy==2.3.1,filetype
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/assets/icono.png
+icon.filename = %(source.dir)s/assets/icon.png
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/assets/presplash.png
+presplash.filename = %(source.dir)s/assets/presplash.png
+
+# (str) Background color of the presplash
+android.presplash_color = #211A14
 
 # (list) Supported orientations
 orientation = portrait

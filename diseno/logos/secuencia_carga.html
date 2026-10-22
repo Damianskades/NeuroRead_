@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pantalla de carga</title>
+</head>
+<body>
+<style>
+body{margin:0}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes leer{0%{transform:translateX(-22px)}38%{transform:translateX(22px)}46%{transform:translateX(-22px)}80%{transform:translateX(10px)}100%{transform:translateX(-22px)}}@keyframes parpadeo{0%,88%,100%{transform:scaleY(1)}92%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
+@keyframes subrayar{0%,8%{transform:scaleX(0)}45%,88%{transform:scaleX(1)}96%,100%{transform:scaleX(0)}}@keyframes plumon{0%,8%{transform:translate(-21px,-15px)}45%{transform:translate(125px,-15px)}60%,88%{transform:translate(150px,-60px)}100%{transform:translate(-21px,-15px)}}
+@keyframes circulo{0%,10%{stroke-dashoffset:1}45%,90%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}@keyframes visto{0%,48%{stroke-dashoffset:1}60%,90%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}
+@keyframes caer{0%{transform:rotate(27deg)}20%{transform:rotate(-4deg)}28%{transform:rotate(3deg)}34%,90%{transform:rotate(0deg)}100%{transform:rotate(27deg)}}@keyframes puntos{0%,34%{transform:scale(0)}42%{transform:scale(1.2)}48%,86%{transform:scale(1)}94%,100%{transform:scale(0)}}
+@keyframes pasar{0%{opacity:0;transform:scale(.2)}5%{opacity:1;transform:scale(1.05)}7%{transform:scale(1)}12%{opacity:1;transform:scale(1)}16.6%{opacity:0;transform:scale(.2)}100%{opacity:0;transform:scale(.2)}}
+@keyframes llegar{0%,66%{opacity:0;transform:scale(.2)}72%{opacity:1;transform:scale(1.1)}76%,100%{opacity:1;transform:scale(1)}}
+@keyframes nombre{0%,74%{opacity:0;transform:translateY(10px)}82%,100%{opacity:1;transform:translateY(0)}}
+@keyframes barra{0%{width:0%}100%{width:100%}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none!important}}
+</style>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #211A14; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; font-family: 'Century Gothic', CenturyGothic, AppleGothic, 'URW Gothic', sans-serif">
+<div style="position: relative; width: 240px; height: 240px">
+<div class="anim" style="position: absolute; inset: 0; opacity: 0; animation: pasar 6s ease-in-out infinite; animation-delay: 0s"><svg width="100%" height="100%" viewBox="0 0 200 164" role="img" aria-label="Libro abierto con pliegues de cerebro">
+<g class="anim" style="animation: flotar 3s ease-in-out infinite">
+<path d="M100 42 C80 32 50 30 28 36 L28 126 C50 120 80 122 100 132 Z" transform="translate(6 6)" fill="#000000"/>
+<path d="M100 42 C120 32 150 30 172 36 L172 126 C150 120 120 122 100 132 Z" transform="translate(6 6)" fill="#000000"/>
+<path d="M100 42 C80 32 50 30 28 36 L28 126 C50 120 80 122 100 132 Z" fill="#F5C84B" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+<path d="M100 42 C120 32 150 30 172 36 L172 126 C150 120 120 122 100 132 Z" fill="#F5C84B" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+<path d="M100 42 V132" stroke="#000000" stroke-width="3" stroke-linecap="round"/>
+<path d="M45 62 C55 52 70 54 72 66 C74 78 58 80 60 92 C62 104 80 102 84 112" fill="none" stroke="#412402" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M155 62 C145 52 130 54 128 66 C126 78 142 80 140 92 C138 104 120 102 116 112" fill="none" stroke="#412402" stroke-width="3.5" stroke-linecap="round"/>
+<circle r="9" fill="#A4CE4E" opacity="0.35"><animateMotion dur="2.6s" repeatCount="indefinite" path="M45 62 C55 52 70 54 72 66 C74 78 58 80 60 92 C62 104 80 102 84 112 L116 112 C120 102 138 104 140 92 C142 80 126 78 128 66 C130 54 145 52 155 62"/></circle>
+<circle r="5" fill="#A4CE4E" stroke="#000000" stroke-width="2"><animateMotion dur="2.6s" repeatCount="indefinite" path="M45 62 C55 52 70 54 72 66 C74 78 58 80 60 92 C62 104 80 102 84 112 L116 112 C120 102 138 104 140 92 C142 80 126 78 128 66 C130 54 145 52 155 62"/></circle>
+</g>
+</svg></div><div class="anim" style="position: absolute; inset: 0; opacity: 0; animation: pasar 6s ease-in-out infinite; animation-delay: 1s"><svg width="100%" height="100%" viewBox="0 0 200 200" role="img" aria-label="Ojo que lee de izquierda a derecha sobre líneas de texto">
+<defs><clipPath id="ojoClip"><path d="M30 78 Q100 24 170 78 Q100 132 30 78 Z"/></clipPath></defs>
+<g class="anim" style="animation: parpadeo 4s ease-in-out infinite; transform-box: view-box; transform-origin: 100px 78px">
+<path d="M30 78 Q100 24 170 78 Q100 132 30 78 Z" transform="translate(6 6)" fill="#000000"/>
+<path d="M30 78 Q100 24 170 78 Q100 132 30 78 Z" fill="#F2EAD9"/>
+<g clip-path="url(#ojoClip)">
+<g class="anim" style="animation: leer 4s ease-in-out infinite; transform-box: view-box">
+<circle cx="100" cy="78" r="21" fill="#2DD4BF" stroke="#000000" stroke-width="4"/>
+<circle cx="100" cy="78" r="9" fill="#000000"/>
+<circle cx="105" cy="73" r="3.5" fill="#F2EAD9"/>
+</g>
+</g>
+<path d="M30 78 Q100 24 170 78 Q100 132 30 78 Z" fill="none" stroke="#000000" stroke-width="5" stroke-linejoin="round"/>
+</g>
+<rect x="44" y="148" width="112" height="9" rx="4.5" fill="#F5C84B" stroke="#000000" stroke-width="2.5"/>
+<rect x="44" y="166" width="80" height="9" rx="4.5" fill="#A4CE4E" stroke="#000000" stroke-width="2.5"/>
+</svg></div><div class="anim" style="position: absolute; inset: 0; opacity: 0; animation: pasar 6s ease-in-out infinite; animation-delay: 2s"><svg width="100%" height="100%" viewBox="0 0 200 200" role="img" aria-label="Plumón resaltador subrayando una línea de un cuaderno"><defs><clipPath id="subClip"><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z"/></clipPath></defs><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" transform="translate(10 10)" fill="#000000"/><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" fill="#F2EAD9"/><g clip-path="url(#subClip)"><path d="M40 0 V200" stroke="#E85C4A" stroke-width="2.5"/>
+<rect class="anim" x="30" y="86" width="150" height="26" fill="#A4CE4E" style="animation: subrayar 3.2s ease-in-out infinite; transform-box: view-box; transform-origin: 30px 99px"/>
+<rect x="52" y="40" width="112" height="9" rx="4.5" fill="#000000"/>
+<rect x="52" y="64" width="86" height="9" rx="4.5" fill="#000000"/>
+<rect x="52" y="94" width="120" height="10" rx="5" fill="#000000"/>
+<rect x="52" y="124" width="100" height="9" rx="4.5" fill="#000000"/>
+<rect x="52" y="148" width="60" height="9" rx="4.5" fill="#000000"/>
+<g class="anim" style="animation: plumon 3.2s ease-in-out infinite">
+<g transform="rotate(38 40 120)">
+<rect x="34" y="122" width="22" height="70" rx="5" transform="translate(4 4)" fill="#000000"/>
+<rect x="34" y="122" width="22" height="70" rx="5" fill="#2DD4BF" stroke="#000000" stroke-width="4"/>
+<rect x="34" y="150" width="22" height="10" fill="#F2EAD9" stroke="#000000" stroke-width="3"/>
+<path d="M37 122 L41 108 H49 L53 122 Z" fill="#A4CE4E" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+</g>
+</g></g><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" fill="none" stroke="#000000" stroke-width="6"/></svg></div><div class="anim" style="position: absolute; inset: 0; opacity: 0; animation: pasar 6s ease-in-out infinite; animation-delay: 3s"><svg width="100%" height="100%" viewBox="0 0 200 200" role="img" aria-label="Hoja de examen con la nota 20 encerrada en un círculo rojo"><defs><clipPath id="notaClip"><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z"/></clipPath></defs><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" transform="translate(10 10)" fill="#000000"/><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" fill="#F2EAD9"/><g clip-path="url(#notaClip)"><path d="M0 36 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 56 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 76 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 96 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 116 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 136 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 156 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 176 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/><path d="M0 196 H200" stroke="#4A90D9" stroke-width="1.5" opacity="0.45"/>
+<path d="M30 0 V200" stroke="#E85C4A" stroke-width="2.5"/>
+<rect x="40" y="22" width="56" height="7" rx="3.5" fill="#000000" opacity="0.7"/>
+<text x="111" y="139" text-anchor="middle" font-size="74" font-weight="700" fill="#000000" style="font-family: inherit">20</text>
+<text x="107" y="135" text-anchor="middle" font-size="74" font-weight="700" fill="#E85C4A" stroke="#000000" stroke-width="3.5" paint-order="stroke" style="font-family: inherit">20</text>
+<path class="anim" d="M60 108 C58 72 98 58 128 66 C160 74 170 108 150 136 C130 160 78 158 62 132 C54 118 58 98 74 84" pathLength="1" fill="none" stroke="#E85C4A" stroke-width="6" stroke-linecap="round" stroke-dasharray="1" style="animation: circulo 3.4s ease-in-out infinite"/>
+<path class="anim" d="M138 166 L148 176 L168 152" fill="none" stroke="#E85C4A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" style="animation: visto 3.4s ease-in-out infinite"/></g><path d="M48 8 H140 A40 40 0 0 1 180 48 V140 A40 40 0 0 1 140 180 H48 A40 40 0 0 1 8 140 V48 A40 40 0 0 1 48 8 Z" fill="none" stroke="#000000" stroke-width="6"/></svg></div><div class="anim" style="position: absolute; inset: 0; opacity: 0; animation: llegar 6s ease-out infinite"><svg width="100%" height="100%" viewBox="0 0 200 200" role="img" aria-label="Icono con tres libros que forman la N y una insignia de puntos">
+<rect x="18" y="18" width="172" height="172" rx="40" fill="#000000"/><rect x="8" y="8" width="172" height="172" rx="40" fill="#F5C84B" stroke="#000000" stroke-width="6"/>
+<g class="anim" style="animation: caer 3.6s ease-in-out infinite; transform-box: view-box; transform-origin: 94px 156px">
+<g transform="rotate(-27 94 96)"><rect x="82" y="39" width="34" height="122" rx="6" fill="#000000"/><rect x="77" y="34" width="34" height="122" rx="6" fill="#F2EAD9" stroke="#000000" stroke-width="5"/><path d="M84 54 H104 M84 136 H104" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/></g>
+</g>
+<rect x="41" y="47" width="34" height="114" rx="6" fill="#000000"/><rect x="36" y="42" width="34" height="114" rx="6" fill="#2DD4BF" stroke="#000000" stroke-width="5"/><path d="M43 60 H63 M43 138 H63" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+<rect x="123" y="47" width="34" height="114" rx="6" fill="#000000"/><rect x="118" y="42" width="34" height="114" rx="6" fill="#A4CE4E" stroke="#000000" stroke-width="5"/><path d="M125 60 H145 M125 138 H145" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M28 160 H162" stroke="#000000" stroke-width="7" stroke-linecap="round"/>
+<g class="anim" style="animation: puntos 3.6s ease-in-out infinite; transform-box: view-box; transform-origin: 163px 20px">
+<rect x="136" y="6" width="62" height="32" rx="16" fill="#000000"/>
+<rect x="132" y="2" width="62" height="32" rx="16" fill="#E85C4A" stroke="#000000" stroke-width="4"/>
+<text x="163" y="24" text-anchor="middle" font-size="17" font-weight="700" fill="#F2EAD9" style="font-family: inherit">+10</text>
+</g>
+</svg></div>
+</div>
+<div class="anim" style="display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; animation: nombre 6s ease-out infinite">
+<div style="font-size: 36px; font-weight: 700; letter-spacing: 1px; line-height: 1"><span style="color: #F2EAD9">NEURO</span><span style="color: #A4CE4E">READ</span></div>
+<div style="font-size: 13px; color: #B7AB92; letter-spacing: 2px">LEE. PIENSA. AVANZA.</div>
+</div>
+<div style="position: absolute; bottom: 90px; width: 180px; height: 10px; box-sizing: border-box; border: 2px solid #000000; border-radius: 6px; background: #3A2F25; overflow: hidden">
+<div class="anim" style="height: 100%; background: #F5C84B; animation: barra 6s linear infinite"></div>
+</div>
+</div>
+</body>
+</html>

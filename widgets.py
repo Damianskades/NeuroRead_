@@ -4,12 +4,14 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle, Line, Ellipse, Rectangle
 from kivy.core.image import Image as CoreImage
 from kivy.properties import (ListProperty, NumericProperty, StringProperty,
                              BooleanProperty)
 from kivy.metrics import dp
 from kivy.factory import Factory
+from kivy.utils import platform
 import theme
 
 
@@ -404,6 +406,15 @@ class NeoTag(Label):
             Line(rounded_rectangle=(x, y, w, h, self.radius), width=dp(1.5))
 
 
+class NeoInput(TextInput):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        if platform == 'android':
+            self.keyboard_suggestions = False
+            if self.input_type == 'null':
+                self.input_type = 'text'
+
+
 for _cls in (NeoCard, NeoButton, NeoChip, NeoIcon, NeoBadge, NeoBar, NeoDeco,
-             NeoTabBar, NeoTab, NeoBotonIcono, NeoTag):
+             NeoTabBar, NeoTab, NeoBotonIcono, NeoTag, NeoInput):
     Factory.register(_cls.__name__, cls=_cls)

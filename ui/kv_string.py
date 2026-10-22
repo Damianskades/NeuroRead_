@@ -1,6 +1,7 @@
 KV = """
 #:import theme theme
 #:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
 #:import config data.config
 #:import hexc kivy.utils.get_hex_from_color
 
@@ -42,7 +43,7 @@ KV = """
     size_hint_y: None
     height: self.texture_size[1]
 
-<CampoTexto@TextInput>:
+<CampoTexto@NeoInput>:
     font_name: theme.F_BODY
     font_size: '14sp'
     foreground_color: theme.TEXTO
@@ -235,6 +236,30 @@ KV = """
     text_size: self.width, None
     size_hint_y: None
     height: max(self.texture_size[1], dp(24))
+
+<AvisoCampo@L>:
+    text: ''
+    font_size: '13sp'
+    font_name: theme.F_DISPLAY
+    bold: True
+    color: theme.ROJO
+    halign: 'left'
+    valign: 'top'
+    text_size: self.width, None
+    size_hint_y: None
+    height: self.texture_size[1] if self.text else 0
+
+<ContadorPalabras@L>:
+    text: ''
+    font_size: '13sp'
+    font_name: theme.F_DISPLAY
+    bold: True
+    color: theme.TEXTO_SEC
+    halign: 'left'
+    valign: 'top'
+    text_size: self.width, None
+    size_hint_y: None
+    height: self.texture_size[1]
 
 <ModHeader@NeoCard>:
     icono: 'book'
@@ -1391,98 +1416,63 @@ ScreenManager:
         Rectangle:
             pos: self.pos
             size: self.size
-    BoxLayout:
-        orientation: 'vertical'
-        padding: [dp(36), dp(96), dp(36), dp(52)]
-        spacing: dp(20)
-        NeoDeco:
-            tint: theme.DORADO
-            seed: 11
-            size_hint_y: None
-            height: dp(34)
-        NeoCard:
-            surface: theme.TARJETA
-            radius: dp(24)
-            size_hint_y: None
-            height: self.minimum_height
-            padding: [dp(24), dp(24)]
+    FloatLayout:
+        BoxLayout:
             orientation: 'vertical'
-            spacing: dp(10)
+            size_hint: None, None
+            width: dp(240)
+            height: self.minimum_height
+            spacing: dp(26)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            FloatLayout:
+                size_hint: None, None
+                size: dp(240), dp(240)
+                LogoLibroNeuronal:
+                    id: splash_libro
+                    opacity: 0
+                    pos_hint: {'x': 0, 'y': 0}
+                LogoOjoLector:
+                    id: splash_ojo
+                    opacity: 0
+                    pos_hint: {'x': 0, 'y': 0}
+                LogoSubrayado:
+                    id: splash_subrayado
+                    opacity: 0
+                    pos_hint: {'x': 0, 'y': 0}
+                LogoNota20:
+                    id: splash_nota
+                    opacity: 0
+                    pos_hint: {'x': 0, 'y': 0}
+                LogoNConPuntos:
+                    id: splash_n
+                    opacity: 0
+                    pos_hint: {'x': 0, 'y': 0}
             BoxLayout:
+                orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(12)
-                NeoIcon:
-                    icon: 'brain'
-                    color_chip: theme.DORADO
-                    size: dp(50), dp(50)
-                    pos_hint: {'top': 1}
-                LDisplay:
-                    markup: True
-                    text: 'NEURO[color=' + hexc(theme.VERDE) + ']READ[/color]'
-                    font_size: '27sp'
-                    halign: 'left'
-                    valign: 'middle'
-                    text_size: self.width, None
+                spacing: dp(6)
+                TextoEspaciado:
+                    id: splash_nombre
+                    partes: [('NEURO', theme.TEXTO), ('READ', theme.VERDE)]
+                    tamano: sp(36)
+                    espacio: dp(1)
+                    interlineado: 1
                     size_hint_y: None
-                    height: max(dp(50), self.texture_size[1])
-                    pos_hint: {'top': 1}
-            LSec:
-                text: 'Evaluación cognitiva de lectura en 6 módulos'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                halign: 'left'
-                valign: 'middle'
-                text_size: self.width, None
-                size_hint_y: None
-                height: max(dp(24), self.texture_size[1])
-            L:
-                text: 'Mide tu velocidad, comprensión, interpretación, creatividad, concentración y memoria. Al final recibes un perfil lector con misiones personalizadas.'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                halign: 'left'
-                valign: 'top'
-                text_size: self.width, None
-                size_hint_y: None
-                height: self.texture_size[1]
-        Widget:
-            size_hint_y: None
-            height: dp(18)
-        LSec:
-            id: splash_msg
-            text: 'Iniciando...'
-            font_size: '13sp'
-            font_name: theme.F_DISPLAY
-            bold: True
-            halign: 'center'
-            text_size: self.width, None
-            size_hint_y: None
-            height: self.texture_size[1]
-        NeoBar:
-            id: splash_bar
-            fill: theme.DORADO
-            max: 100
-            value: 0
-            size_hint_y: None
-            height: dp(18)
-        Widget:
-            size_hint_y: 1
-        NeoDeco:
-            tint: theme.TURQUESA
-            seed: 23
-            size_hint_y: None
-            height: dp(30)
-        LSec:
-            text: 'v3.0: 6 textos aleatorios y modo NeuroUltra'
-            font_size: '13sp'
-            font_name: theme.F_DISPLAY
-            bold: True
-            halign: 'center'
-            text_size: self.width, None
-            size_hint_y: None
-            height: max(dp(22), self.texture_size[1])
+                    opacity: 0
+                TextoEspaciado:
+                    id: splash_lema
+                    partes: [('LEE. PIENSA. AVANZA.', theme.TEXTO_SEC)]
+                    tamano: sp(13)
+                    espacio: dp(2)
+                    size_hint_y: None
+                    opacity: 0
+        BarraCarga:
+            id: splash_barra
+            size_hint: None, None
+            size: dp(180), dp(10)
+            pos_hint: {'center_x': 0.5}
+            y: dp(90)
 
 <LoginScreen>:
     canvas.before:
@@ -1695,6 +1685,7 @@ ScreenManager:
                 CampoTexto:
                     id: reg_correo
                     hint_text: 'nombre@correo.com'
+                    input_type: 'mail'
                 Etiqueta:
                     text: 'CONTRASEÑA'
                 CampoTexto:
@@ -1807,6 +1798,7 @@ ScreenManager:
                 CampoTexto:
                     id: edit_correo
                     hint_text: 'nombre@correo.com'
+                    input_type: 'mail'
                 Widget:
                     size_hint_y: None
                     height: dp(6)
@@ -2659,7 +2651,11 @@ ScreenManager:
                 text_size: self.width, None
                 size_hint_y: None
                 height: self.texture_size[1]
-        TextInput:
+        AvisoCampo:
+            id: inter_aviso
+        ContadorPalabras:
+            id: inter_count_lbl
+        NeoInput:
             id: inter_input
             hint_text: 'Escribe tu análisis aquí...'
             font_name: theme.F_BODY
@@ -2670,28 +2666,7 @@ ScreenManager:
             hint_text_color: theme.TEXTO_SEC
             multiline: True
             padding: [dp(14), dp(12)]
-            on_text: app.inter_count(self.text)
-        BoxLayout:
-            size_hint_y: None
-            height: dp(26)
-            LSec:
-                id: inter_count_lbl
-                text: '0 palabras'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                color: theme.NARANJA
-                halign: 'left'
-                valign: 'middle'
-                text_size: self.size
-            LSec:
-                text: 'mínimo 10, sin repetir'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                halign: 'right'
-                valign: 'middle'
-                text_size: self.size
+            on_text: root.contar(self.text)
         NeoButton:
             text: 'SIGUIENTE'
             surface: theme.AZUL
@@ -2774,7 +2749,24 @@ ScreenManager:
                 text_size: self.width, None
                 size_hint_y: None
                 height: self.texture_size[1]
-        TextInput:
+        AvisoCampo:
+            id: imag_aviso
+        BoxLayout:
+            size_hint_y: None
+            height: max(imag_count_lbl.height, imag_riqueza_lbl.height)
+            spacing: dp(10)
+            ContadorPalabras:
+                id: imag_count_lbl
+                size_hint_x: 0.62
+                pos_hint: {'top': 1}
+            ContadorPalabras:
+                id: imag_riqueza_lbl
+                text: 'Riqueza: --'
+                color: theme.VERDE
+                halign: 'right'
+                size_hint_x: 0.38
+                pos_hint: {'top': 1}
+        NeoInput:
             id: imag_input
             hint_text: 'Describe tu final alternativo aquí...'
             font_name: theme.F_BODY
@@ -2785,30 +2777,7 @@ ScreenManager:
             hint_text_color: theme.TEXTO_SEC
             multiline: True
             padding: [dp(14), dp(12)]
-            on_text: app.imag_count(self.text)
-        BoxLayout:
-            size_hint_y: None
-            height: dp(26)
-            LSec:
-                id: imag_count_lbl
-                text: '0 palabras'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                color: theme.TURQUESA
-                halign: 'left'
-                valign: 'middle'
-                text_size: self.size
-            LSec:
-                id: imag_riqueza_lbl
-                text: 'Riqueza: --'
-                font_size: '13sp'
-                font_name: theme.F_DISPLAY
-                bold: True
-                color: theme.VERDE
-                halign: 'right'
-                valign: 'middle'
-                text_size: self.size
+            on_text: root.contar(self.text)
         NeoButton:
             text: 'EVALUAR MI CREATIVIDAD'
             surface: theme.TURQUESA

@@ -2,6 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.app import App
 from screens.registro import (SelectorGrado, validar_datos, validar_clave_nueva,
                               limpiar_nombre)
+from screens.common import mostrar_aviso
 from data import db
 import session
 import theme
@@ -29,8 +30,8 @@ class EditarPerfilScreen(SelectorGrado, Screen):
         ids.edit_scroll.scroll_y = 1
 
     def _error(self, mensaje):
-        self.ids.edit_error.text = mensaje
         self.ids.edit_error.color = theme.ROJO
+        mostrar_aviso(self.ids.edit_error, mensaje, self.ids.edit_scroll)
 
     def guardar(self):
         u = session.usuario
