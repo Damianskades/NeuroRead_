@@ -1,5 +1,8 @@
 [app]
 
+p4a.branch = v2024.01.21
+android.ndk = 25b
+
 # (str) Title of your application
 title = NeuroRead
 
