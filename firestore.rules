@@ -1,0 +1,260 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    function esDueno(uid) {
+      return autenticado() && request.auth.uid == uid;
+    }
+
+    function texto(valor, minimo, maximo) {
+      return valor is string && valor.size() >= minimo && valor.size() <= maximo;
+    }
+
+    function entero(valor, minimo, maximo) {
+      return valor is int && valor >= minimo && valor <= maximo;
+    }
+
+    function enteroONulo(valor, minimo, maximo) {
+      return valor == null || entero(valor, minimo, maximo);
+    }
+
+    function niveles() {
+      return ['EXPLORADOR', 'CONSTRUCTOR', 'ESTRATEGA', 'MAESTRO'];
+    }
+
+    function libros() {
+      return ['selva', 'isla', 'principe'];
+    }
+
+    function grados() {
+      return ['Primero de secundaria', 'Segundo de secundaria', 'Tercero de secundaria',
+              'Cuarto de secundaria', 'Quinto de secundaria'];
+    }
+
+    function codificar(valor) {
+      return valor.lower().replace('%', '%25').replace('/', '%2F');
+    }
+
+    function claveUsuario(nombreUsuario) {
+      return 'u_' + codificar(nombreUsuario);
+    }
+
+    function claveCorreo(correo) {
+      return 'c_' + codificar(correo);
+    }
+
+    function rutaAcceso(clave) {
+      return /databases/$(database)/documents/accesos/$(clave);
+    }
+
+    function accesoPropioDespues(clave) {
+      return existsAfter(rutaAcceso(clave))
+        && getAfter(rutaAcceso(clave)).data.id_usuario == request.auth.uid;
+    }
+
+    function camposUsuario() {
+      return ['id_usuario', 'usu_nombreUs', 'usu_nombre', 'usu_apellido', 'usu_grado',
+              'usu_correo', 'usu_nivel', 'usu_evaluacionInicial', 'usu_estado',
+              'usu_creado', 'usu_actualizado'];
+    }
+
+    function usuarioValido(d, uid) {
+      return d.keys().hasOnly(camposUsuario())
+        && d.keys().hasAll(camposUsuario())
+        && d.id_usuario == uid
+        && d.usu_nombreUs is string
+        && d.usu_nombreUs.matches('^[A-Za-z0-9_]{3,20}$')
+        && texto(d.usu_nombre, 1, 60)
+        && d.usu_nombre.matches('^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ ]+$')
+        && texto(d.usu_apellido, 1, 60)
+        && d.usu_apellido.matches('^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ ]+$')
+        && d.usu_grado in grados()
+        && texto(d.usu_correo, 5, 120)
+        && d.usu_correo == d.usu_correo.lower()
+        && d.usu_correo.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && (d.usu_nivel == null || d.usu_nivel in niveles())
+        && d.usu_evaluacionInicial is bool
+        && d.usu_estado in ['activo', 'inactivo']
+        && d.usu_creado is timestamp
+        && d.usu_actualizado is timestamp;
+    }
+
+    match /usuarios/{uid} {
+      allow get: if esDueno(uid);
+      allow list: if false;
+
+      allow create: if esDueno(uid)
+        && usuarioValido(request.resource.data, uid)
+        && request.resource.data.usu_estado == 'activo'
+        && request.resource.data.usu_evaluacionInicial == false
+        && request.resource.data.usu_nivel == null
+        && accesoPropioDespues(claveUsuario(request.resource.data.usu_nombreUs))
+        && accesoPropioDespues(claveCorreo(request.resource.data.usu_correo));
+
+      allow update: if esDueno(uid)
+        && usuarioValido(request.resource.data, uid)
+        && request.resource.data.usu_creado == resource.data.usu_creado
+        && request.resource.data.usu_estado == resource.data.usu_estado
+        && (request.resource.data.usu_evaluacionInicial == resource.data.usu_evaluacionInicial
+            || request.resource.data.usu_evaluacionInicial == true)
+        && (claveUsuario(request.resource.data.usu_nombreUs) == claveUsuario(resource.data.usu_nombreUs)
+            || accesoPropioDespues(claveUsuario(request.resource.data.usu_nombreUs)))
+        && (claveCorreo(request.resource.data.usu_correo) == claveCorreo(resource.data.usu_correo)
+            || accesoPropioDespues(claveCorreo(request.resource.data.usu_correo)));
+
+      allow delete: if esDueno(uid);
+
+      match /sesiones/{idSesion} {
+        allow read: if esDueno(uid);
+        allow create: if esDueno(uid) && sesionValida(request.resource.data, uid);
+        allow update: if false;
+        allow delete: if esDueno(uid);
+      }
+
+      match /capitulosLeidos/{idCapitulo} {
+        allow read: if esDueno(uid);
+        allow create: if esDueno(uid) && capituloValido(request.resource.data, uid, idCapitulo);
+        allow update: if false;
+        allow delete: if esDueno(uid);
+      }
+
+      match /actividadesCompletadas/{idCompletada} {
+        allow read: if esDueno(uid);
+        allow create: if esDueno(uid) && completadaValida(request.resource.data, uid);
+        allow update: if false;
+        allow delete: if esDueno(uid);
+      }
+
+      match /actividadesEnCurso/{idActividad} {
+        allow read: if esDueno(uid);
+        allow create, update: if esDueno(uid)
+          && enCursoValida(request.resource.data, uid, idActividad);
+        allow delete: if esDueno(uid);
+      }
+
+      match /palabrasUsadas/{idPalabra} {
+        allow read: if esDueno(uid);
+        allow create: if esDueno(uid) && palabraValida(request.resource.data, uid);
+        allow update: if false;
+        allow delete: if esDueno(uid);
+      }
+    }
+
+    function camposSesion() {
+      return ['id_usuario', 'ses_fecha', 'ses_tipo', 'ses_textoId', 'ses_puntajeGlobal',
+              'ses_nivel', 'ses_velocidad', 'ses_comprension', 'ses_interpretacion',
+              'ses_imaginacion', 'ses_concentracion', 'ses_retencion', 'ses_literal',
+              'ses_inferencial', 'ses_critica', 'ses_tiempoLectura', 'ses_ppm'];
+    }
+
+    function sesionValida(d, uid) {
+      return d.keys().hasOnly(camposSesion())
+        && d.keys().hasAll(camposSesion())
+        && d.id_usuario == uid
+        && d.ses_fecha is timestamp
+        && d.ses_tipo in ['inicial', 'clasificatoria']
+        && enteroONulo(d.ses_textoId, 1, 1000)
+        && entero(d.ses_puntajeGlobal, 0, 100)
+        && d.ses_nivel in niveles()
+        && enteroONulo(d.ses_velocidad, 0, 100)
+        && enteroONulo(d.ses_comprension, 0, 100)
+        && enteroONulo(d.ses_interpretacion, 0, 100)
+        && enteroONulo(d.ses_imaginacion, 0, 100)
+        && enteroONulo(d.ses_concentracion, 0, 100)
+        && enteroONulo(d.ses_retencion, 0, 100)
+        && enteroONulo(d.ses_literal, 0, 100)
+        && enteroONulo(d.ses_inferencial, 0, 100)
+        && enteroONulo(d.ses_critica, 0, 100)
+        && (d.ses_tiempoLectura == null
+            || (d.ses_tiempoLectura is number && d.ses_tiempoLectura >= 0
+                && d.ses_tiempoLectura <= 86400))
+        && enteroONulo(d.ses_ppm, 0, 100000);
+    }
+
+    function capituloValido(d, uid, idCapitulo) {
+      return d.keys().hasOnly(['id_usuario', 'cap_libroId', 'cap_capitulo', 'cap_fecha'])
+        && d.keys().hasAll(['id_usuario', 'cap_libroId', 'cap_capitulo', 'cap_fecha'])
+        && d.id_usuario == uid
+        && d.cap_libroId in libros()
+        && entero(d.cap_capitulo, 1, 99)
+        && idCapitulo.matches('^' + d.cap_libroId + '_[0-9]{2}$')
+        && d.cap_fecha is timestamp;
+    }
+
+    function camposCompletada() {
+      return ['id_usuario', 'aco_actividadId', 'aco_libroId', 'aco_nivel', 'aco_aciertos',
+              'aco_total', 'aco_respuesta', 'aco_fecha'];
+    }
+
+    function completadaValida(d, uid) {
+      return d.keys().hasOnly(camposCompletada())
+        && d.keys().hasAll(camposCompletada())
+        && d.id_usuario == uid
+        && texto(d.aco_actividadId, 1, 40)
+        && (d.aco_libroId == null || d.aco_libroId in libros())
+        && (d.aco_nivel == null || d.aco_nivel in niveles())
+        && entero(d.aco_total, 1, 20)
+        && entero(d.aco_aciertos, 0, d.aco_total)
+        && d.aco_respuesta is list
+        && d.aco_respuesta.size() <= 20
+        && d.aco_fecha is timestamp;
+    }
+
+    function enCursoValida(d, uid, idActividad) {
+      return d.keys().hasOnly(['id_usuario', 'aec_actividadId', 'aec_paso', 'aec_respuestas',
+                               'aec_actualizado'])
+        && d.keys().hasAll(['id_usuario', 'aec_actividadId', 'aec_paso', 'aec_respuestas',
+                            'aec_actualizado'])
+        && d.id_usuario == uid
+        && d.aec_actividadId == idActividad
+        && texto(idActividad, 1, 40)
+        && entero(d.aec_paso, 0, 20)
+        && d.aec_respuestas is list
+        && d.aec_respuestas.size() <= 20
+        && d.aec_actualizado is timestamp;
+    }
+
+    function palabraValida(d, uid) {
+      return d.keys().hasOnly(['id_usuario', 'pal_nivel', 'pal_palabra', 'pal_fecha'])
+        && d.keys().hasAll(['id_usuario', 'pal_nivel', 'pal_palabra', 'pal_fecha'])
+        && d.id_usuario == uid
+        && d.pal_nivel in ['FACIL', 'NORMAL', 'DIFICIL']
+        && texto(d.pal_palabra, 1, 40)
+        && d.pal_fecha is timestamp;
+    }
+
+    function camposAcceso() {
+      return ['id_usuario', 'acc_cuenta'];
+    }
+
+    function rutaUsuario() {
+      return /databases/$(database)/documents/usuarios/$(request.auth.uid);
+    }
+
+    function claveDelPerfilDespues(clave) {
+      let perfil = getAfter(rutaUsuario()).data;
+      return clave == claveUsuario(perfil.usu_nombreUs) || clave == claveCorreo(perfil.usu_correo);
+    }
+
+    match /accesos/{clave} {
+      allow get: if true;
+      allow list: if false;
+
+      allow create: if autenticado()
+        && request.resource.data.keys().hasOnly(camposAcceso())
+        && request.resource.data.keys().hasAll(camposAcceso())
+        && request.resource.data.id_usuario == request.auth.uid
+        && request.resource.data.acc_cuenta == request.auth.token.email
+        && existsAfter(rutaUsuario())
+        && claveDelPerfilDespues(clave);
+
+      allow update: if false;
+      allow delete: if autenticado() && resource.data.id_usuario == request.auth.uid;
+    }
+  }
+}

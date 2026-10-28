@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../estado/estado_evaluacion.dart';
+import '../estado/estado_usuario.dart';
 import '../pantallas/acceso/pantalla_carga.dart';
 import '../tema/medidas.dart';
 import '../tema/tema_app.dart';
@@ -10,15 +13,21 @@ class NeuroReadApp extends StatelessWidget {
   const NeuroReadApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'NeuroRead',
-    debugShowCheckedModeBanner: false,
-    theme: temaApp(),
-    locale: Idioma.locale,
-    supportedLocales: Idioma.soportados,
-    localizationsDelegates: Idioma.delegados,
-    builder: (context, child) => EscalaTexto(child: child!),
-    home: const _Raiz(),
+  Widget build(BuildContext context) => MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => EstadoUsuario()),
+      Provider(create: (_) => EstadoEvaluacion()),
+    ],
+    child: MaterialApp(
+      title: 'NeuroRead',
+      debugShowCheckedModeBanner: false,
+      theme: temaApp(),
+      locale: Idioma.locale,
+      supportedLocales: Idioma.soportados,
+      localizationsDelegates: Idioma.delegados,
+      builder: (context, child) => EscalaTexto(child: child!),
+      home: const _Raiz(),
+    ),
   );
 }
 

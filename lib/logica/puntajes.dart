@@ -319,6 +319,7 @@ String _titulo(String texto) => texto.isEmpty
 
 class SesionResumen {
   const SesionResumen({
+    this.id,
     required this.fecha,
     required this.tipo,
     required this.textoId,
@@ -337,6 +338,7 @@ class SesionResumen {
     required this.ppm,
   });
 
+  final String? id;
   final DateTime fecha;
   final String tipo;
   final int? textoId;

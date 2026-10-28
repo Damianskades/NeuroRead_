@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"neuroreadhyo","appId":"1:1089284515204:android:c371a31d573795ca4be9d1","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"neuroreadhyo","configurations":{"android":"1:1089284515204:android:c371a31d573795ca4be9d1","ios":"1:1089284515204:ios:5c1824f8514629ec4be9d1","web":"1:1089284515204:web:5f224cdcee4c98134be9d1","windows":"1:1089284515204:web:1967063468b23f524be9d1"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "neuroreadhyo",
+          "appId": "1:1089284515204:android:c371a31d573795ca4be9d1",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "neuroreadhyo",
+          "configurations": {
+            "android": "1:1089284515204:android:c371a31d573795ca4be9d1",
+            "ios": "1:1089284515204:ios:5c1824f8514629ec4be9d1",
+            "web": "1:1089284515204:web:5f224cdcee4c98134be9d1",
+            "windows": "1:1089284515204:web:1967063468b23f524be9d1"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}
