@@ -1,0 +1,5 @@
+package org.damianskades.neuroread
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
