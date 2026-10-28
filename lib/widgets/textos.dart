@@ -116,6 +116,7 @@ InlineSpan _soloTrazo(InlineSpan span, Paint trazo) {
         ? null
         : TextStyle(
             fontFamily: estilo.fontFamily,
+            fontFamilyFallback: estilo.fontFamilyFallback,
             fontWeight: estilo.fontWeight,
             fontSize: estilo.fontSize,
             height: estilo.height,
