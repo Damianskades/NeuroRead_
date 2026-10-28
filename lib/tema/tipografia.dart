@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
 import 'colores.dart';
@@ -9,21 +8,8 @@ abstract final class Tipografia {
   static const tamanoMinimoRegular = 14.0;
   static const alturaLinea = 1.23;
 
-  static const _libre = 'Jost';
-  static const _librePorcentaje = 'ComicNeue';
-
-  static bool get _sistemaWindows =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
-
-  static String get familia => _sistemaWindows ? 'Century Gothic' : _libre;
-
-  static List<String>? get respaldo => _sistemaWindows ? const [_libre] : null;
-
-  static String get familiaPorcentaje =>
-      _sistemaWindows ? 'Comic Sans MS' : _librePorcentaje;
-
-  static List<String>? get respaldoPorcentaje =>
-      _sistemaWindows ? const [_librePorcentaje] : null;
+  static const familia = 'Jost';
+  static const familiaPorcentaje = 'ComicNeue';
 
   static TextStyle _base(
     FontWeight peso,
@@ -32,7 +18,6 @@ abstract final class Tipografia {
     double interlineado,
   ) => TextStyle(
     fontFamily: familia,
-    fontFamilyFallback: respaldo,
     fontWeight: peso,
     fontSize: tamano,
     color: color,
@@ -63,7 +48,6 @@ abstract final class Tipografia {
 
   static TextStyle porcentaje(double? tamanoBase) => TextStyle(
     fontFamily: familiaPorcentaje,
-    fontFamilyFallback: respaldoPorcentaje,
     fontWeight: FontWeight.w700,
     fontSize: tamanoBase == null ? null : tamanoBase * escalaPorcentaje,
   );

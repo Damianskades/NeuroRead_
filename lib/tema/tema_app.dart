@@ -8,7 +8,6 @@ ThemeData temaApp() => ThemeData(
   scaffoldBackgroundColor: Colores.fondo,
   canvasColor: Colores.fondo,
   fontFamily: Tipografia.familia,
-  fontFamilyFallback: Tipografia.respaldo,
   colorScheme: const ColorScheme.dark(
     primary: Colores.dorado,
     onPrimary: Colores.textoOscuro,

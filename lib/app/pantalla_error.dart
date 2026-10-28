@@ -8,6 +8,7 @@ import '../tema/colores.dart';
 import '../tema/tema_app.dart';
 import '../tema/tipografia.dart';
 import 'escala_texto.dart';
+import 'idioma.dart';
 
 class AppError extends StatelessWidget {
   const AppError({super.key, required this.texto});
@@ -19,6 +20,9 @@ class AppError extends StatelessWidget {
     title: 'NeuroRead',
     debugShowCheckedModeBanner: false,
     theme: temaApp(),
+    locale: Idioma.locale,
+    supportedLocales: Idioma.soportados,
+    localizationsDelegates: Idioma.delegados,
     builder: (context, child) => EscalaTexto(child: child!),
     home: PantallaError(texto: texto),
   );
