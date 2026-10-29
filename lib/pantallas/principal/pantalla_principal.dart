@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import '../../estado/navegacion.dart';
 import '../../tema/medidas.dart';
 import '../../widgets/neo_tab_bar.dart';
-import '../provisionales.dart';
 import 'detalle_libro.dart';
 import 'pestana_evaluacion.dart';
 import 'pestana_inicio.dart';
 import 'pestana_libros.dart';
+import 'pestana_perfil.dart';
 import 'pestana_ruta.dart';
 
 class PantallaPrincipal extends StatelessWidget {
@@ -19,11 +19,7 @@ class PantallaPrincipal extends StatelessWidget {
     Pestanas.evaluacion => const PestanaEvaluacion(),
     Pestanas.libros => const PestanaLibros(),
     Pestanas.libroDetalle => DetalleLibro(libroId: libroId),
-    Pestanas.perfil => const PestanaProvisional(
-      titulo: 'Perfil',
-      fase: 'El perfil llega en la fase 12.',
-      conCerrarSesion: true,
-    ),
+    Pestanas.perfil => const PestanaPerfil(),
     _ => const PestanaInicio(),
   };
 

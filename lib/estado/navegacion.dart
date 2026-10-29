@@ -42,6 +42,7 @@ class Navegacion extends ChangeNotifier {
   String origenResultados = Pestanas.inicio;
   int numeroCapitulo = 1;
   String origenLector = 'detalle';
+  String mensajePerfil = '';
 
   Pantalla get actual => _actual;
 

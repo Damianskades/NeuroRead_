@@ -17,7 +17,7 @@ import '../pantallas/evaluacion/pantalla_velocidad.dart';
 import '../pantallas/lectura/pantalla_actividad.dart';
 import '../pantallas/lectura/pantalla_lector.dart';
 import '../pantallas/principal/pantalla_principal.dart';
-import '../pantallas/provisionales.dart';
+import '../pantallas/perfil/pantalla_editar_perfil.dart';
 import '../pantallas/resultados/pantalla_resultados.dart';
 import '../servicios/recarga.dart';
 import '../tema/medidas.dart';
@@ -94,11 +94,7 @@ class _RaizState extends State<_Raiz> {
     Pantalla.lector => const PantallaLector(),
     Pantalla.actividad => const PantallaActividad(),
     Pantalla.resultados => const PantallaResultados(),
-    Pantalla.editarPerfil => PantallaProvisional(
-      titulo: 'Editar perfil',
-      fase: 'Editar perfil llega en la fase 12.',
-      alVolver: () => navegacion.irAPestana(Pestanas.perfil),
-    ),
+    Pantalla.editarPerfil => const PantallaEditarPerfil(),
   };
 
   @override
