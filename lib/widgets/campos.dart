@@ -94,53 +94,42 @@ class CampoTextoFlexible extends StatelessWidget {
   final ValueChanged<String>? alCambiar;
 
   @override
-  Widget build(BuildContext context) => ObjetivoTeclado(
-    child: DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF332920), Colores.tarjetaAlt],
-        ),
-        border: Border.all(
-          color: const Color(0xFF110E0B),
-          width: 1 / MediaQuery.devicePixelRatioOf(context),
-        ),
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFF332920), Colores.tarjetaAlt],
       ),
-      child: TextField(
-        controller: controlador,
-        keyboardType: TextInputType.multiline,
-        textInputAction: TextInputAction.newline,
-        maxLines: null,
-        expands: true,
-        textAlignVertical: TextAlignVertical.top,
-        autocorrect: false,
-        enableSuggestions: false,
-        cursorColor: colorCursor,
-        onChanged: alCambiar,
-        style: Tipografia.cuerpo(14),
-        decoration: InputDecoration(
-          hintText: pista,
-          hintStyle: Tipografia.cuerpo(14, color: Colores.textoSec),
-          border: InputBorder.none,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 12,
-          ),
+      border: Border.all(
+        color: const Color(0xFF110E0B),
+        width: 1 / MediaQuery.devicePixelRatioOf(context),
+      ),
+    ),
+    child: TextField(
+      controller: controlador,
+      keyboardType: TextInputType.multiline,
+      textInputAction: TextInputAction.newline,
+      maxLines: null,
+      expands: true,
+      textAlignVertical: TextAlignVertical.top,
+      autocorrect: false,
+      enableSuggestions: false,
+      cursorColor: colorCursor,
+      onChanged: alCambiar,
+      style: Tipografia.cuerpo(14),
+      decoration: InputDecoration(
+        hintText: pista,
+        hintStyle: Tipografia.cuerpo(14, color: Colores.textoSec),
+        border: InputBorder.none,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
         ),
       ),
     ),
   );
-}
-
-class ObjetivoTeclado extends StatelessWidget {
-  const ObjetivoTeclado({super.key, required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => child;
 }
 
 class _BordeRecto extends CustomPainter {

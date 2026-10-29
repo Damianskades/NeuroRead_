@@ -12,6 +12,7 @@ import '../../widgets/mod_header.dart';
 import '../../widgets/neo_bar.dart';
 import '../../widgets/neo_button.dart';
 import '../../widgets/neo_card.dart';
+import '../../widgets/teclado.dart';
 import '../../widgets/textos.dart';
 import 'marco_modulo.dart';
 
@@ -81,63 +82,69 @@ class _PantallaInterpretacionState extends State<PantallaInterpretacion> {
     final actual = _indice.clamp(0, total - 1);
     final palabras = contarPalabras(_campo.text);
     return MarcoModulo(
-      espacio: 11,
       children: [
-        const ModHeader(
-          icono: 'eye',
-          titulo: 'NeuroInsight',
-          subtitulo: 'Módulo 3 de 6: interpretación profunda',
-          colorChip: Colores.azul,
-        ),
-        SizedBox(
-          height: 22,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Texto(
-              'Pregunta ${actual + 1} de $total',
-              color: Colores.textoSec,
-              negrita: true,
+        Expanded(
+          child: ColumnaConCampo(
+            arriba: [
+              const ModHeader(
+                icono: 'eye',
+                titulo: 'NeuroInsight',
+                subtitulo: 'Módulo 3 de 6: interpretación profunda',
+                colorChip: Colores.azul,
+              ),
+              SizedBox(
+                height: 22,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Texto(
+                    'Pregunta ${actual + 1} de $total',
+                    color: Colores.textoSec,
+                    negrita: true,
+                  ),
+                ),
+              ),
+              NeoBar(
+                valor: _indice.toDouble(),
+                maximo: total.toDouble(),
+                relleno: Colores.azul,
+              ),
+              NeoCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                child: Texto(preguntas[actual], tamano: 14, negrita: true),
+              ),
+              const NeoCard(
+                superficie: Colores.tarjetaAlt,
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                child: Texto(
+                  'Guía: responde con tus propias palabras, menciona emociones, '
+                  'intención del autor y ejemplos. Se detectan respuestas repetitivas.',
+                  negrita: true,
+                ),
+              ),
+            ],
+            aviso: AvisoCampo(_aviso),
+            contador: ContadorPalabras(
+              textoContador(palabras),
+              color: colorContador(palabras),
+            ),
+            campo: CampoTextoFlexible(
+              controlador: _campo,
+              pista: 'Escribe tu análisis aquí...',
+              colorCursor: Colores.azul,
+              alCambiar: (_) => setState(() {}),
+            ),
+            boton: NeoButton(
+              'SIGUIENTE',
+              superficie: Colores.azul,
+              colorTexto: Colores.texto,
+              tamano: 16,
+              alto: 58,
+              onPressed: _siguiente,
             ),
           ),
-        ),
-        NeoBar(
-          valor: _indice.toDouble(),
-          maximo: total.toDouble(),
-          relleno: Colores.azul,
-        ),
-        NeoCard(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          child: Texto(preguntas[actual], tamano: 14, negrita: true),
-        ),
-        const NeoCard(
-          superficie: Colores.tarjetaAlt,
-          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Texto(
-            'Guía: responde con tus propias palabras, menciona emociones, '
-            'intención del autor y ejemplos. Se detectan respuestas repetitivas.',
-            negrita: true,
-          ),
-        ),
-        AvisoCampo(_aviso),
-        ContadorPalabras(
-          textoContador(palabras),
-          color: colorContador(palabras),
-        ),
-        Expanded(
-          child: CampoTextoFlexible(
-            controlador: _campo,
-            pista: 'Escribe tu análisis aquí...',
-            colorCursor: Colores.azul,
-            alCambiar: (_) => setState(() {}),
-          ),
-        ),
-        NeoButton(
-          'SIGUIENTE',
-          superficie: Colores.azul,
-          colorTexto: Colores.texto,
-          tamano: 16,
-          alto: 58,
-          onPressed: _siguiente,
         ),
       ],
     );

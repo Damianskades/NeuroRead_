@@ -274,10 +274,16 @@ class EstadoUsuario extends ChangeNotifier {
       return const [];
     }
     try {
-      return await repositorio.palabrasRecientes(id);
+      return await repositorio
+          .palabrasRecientes(id)
+          .timeout(const Duration(seconds: 4));
     } catch (error) {
-      debugPrint('No se pudieron leer las palabras usadas: $error');
-      return const [];
+      try {
+        return await repositorio.palabrasRecientes(id, soloCache: true);
+      } catch (otro) {
+        debugPrint('No se pudieron leer las palabras usadas: $otro');
+        return const [];
+      }
     }
   }
 }

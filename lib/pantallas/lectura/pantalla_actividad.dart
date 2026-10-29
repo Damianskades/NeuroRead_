@@ -22,6 +22,7 @@ import '../../widgets/neo_button.dart';
 import '../../widgets/neo_card.dart';
 import '../../widgets/neo_chip.dart';
 import '../../widgets/neo_icon.dart';
+import '../../widgets/teclado.dart';
 import '../../widgets/textos.dart';
 
 enum _Seccion { intro, paso, resumen }
@@ -525,40 +526,42 @@ class _PantallaActividadState extends State<PantallaActividad> {
 
   Widget _zonaEscrita(PasoEscrita paso) {
     final palabras = contarPalabras(_campo.text);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: 12,
-      children: [
-        KeyedSubtree(
-          key: _claveAviso,
-          child: _aviso.isEmpty
-              ? const SizedBox.shrink()
-              : Texto(_aviso, color: Colores.rojo, negrita: true),
-        ),
-        ContadorPalabras(
-          '${plural(palabras, 'palabra', 'palabras')} de ${paso.minPalabras} mínimas',
-          color: palabras >= paso.minPalabras
-              ? Colores.verde
-              : Colores.textoSec,
-        ),
-        CampoTexto.largo(
-          controlador: _campo,
-          pista: 'Escribe tu respuesta aquí...',
-          soloLectura: _respondido,
-          alCambiar: (_) => setState(() {}),
-        ),
-        Opacity(
-          opacity: _respondido ? 0.5 : 1,
-          child: NeoButton(
-            'COMPROBAR',
-            superficie: Colores.verde,
-            tamano: 14,
-            alto: 52,
-            habilitado: !_respondido,
-            onPressed: () => _comprobarEscrita(paso),
+    return GrupoSobreTeclado(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 12,
+        children: [
+          KeyedSubtree(
+            key: _claveAviso,
+            child: _aviso.isEmpty
+                ? const SizedBox.shrink()
+                : Texto(_aviso, color: Colores.rojo, negrita: true),
           ),
-        ),
-      ],
+          ContadorPalabras(
+            '${plural(palabras, 'palabra', 'palabras')} de ${paso.minPalabras} mínimas',
+            color: palabras >= paso.minPalabras
+                ? Colores.verde
+                : Colores.textoSec,
+          ),
+          CampoTexto.largo(
+            controlador: _campo,
+            pista: 'Escribe tu respuesta aquí...',
+            soloLectura: _respondido,
+            alCambiar: (_) => setState(() {}),
+          ),
+          Opacity(
+            opacity: _respondido ? 0.5 : 1,
+            child: NeoButton(
+              'COMPROBAR',
+              superficie: Colores.verde,
+              tamano: 14,
+              alto: 52,
+              habilitado: !_respondido,
+              onPressed: () => _comprobarEscrita(paso),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -9,8 +9,10 @@ import '../pantallas/acceso/pantalla_carga.dart';
 import '../pantallas/acceso/pantalla_registro.dart';
 import '../pantallas/evaluacion/pantalla_bienvenida.dart';
 import '../pantallas/evaluacion/pantalla_comprension.dart';
+import '../pantallas/evaluacion/pantalla_concentracion.dart';
 import '../pantallas/evaluacion/pantalla_imaginacion.dart';
 import '../pantallas/evaluacion/pantalla_interpretacion.dart';
+import '../pantallas/evaluacion/pantalla_retencion.dart';
 import '../pantallas/evaluacion/pantalla_velocidad.dart';
 import '../pantallas/lectura/pantalla_actividad.dart';
 import '../pantallas/lectura/pantalla_lector.dart';
@@ -86,11 +88,8 @@ class _RaizState extends State<_Raiz> {
     Pantalla.comprension => const PantallaComprension(),
     Pantalla.interpretacion => const PantallaInterpretacion(),
     Pantalla.imaginacion => const PantallaImaginacion(),
-    Pantalla.concentracion || Pantalla.retencion => const PantallaProvisional(
-      titulo: 'NeuroFocus',
-      fase: 'NeuroFocus y NeuroMemory llegan en la fase 10b.',
-      conCerrarSesion: true,
-    ),
+    Pantalla.concentracion => const PantallaConcentracion(),
+    Pantalla.retencion => const PantallaRetencion(),
     Pantalla.lector => const PantallaLector(),
     Pantalla.actividad => const PantallaActividad(),
     Pantalla.resultados => PantallaProvisional(

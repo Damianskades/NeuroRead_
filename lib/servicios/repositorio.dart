@@ -123,11 +123,14 @@ class Repositorio {
     return lote.commit();
   }
 
-  Future<List<PalabraUsada>> palabrasRecientes(String uid) async {
+  Future<List<PalabraUsada>> palabrasRecientes(
+    String uid, {
+    bool soloCache = false,
+  }) async {
     final consulta = await _sub(uid, 'palabrasUsadas')
         .orderBy('pal_fecha', descending: true)
         .limit(evaluacionesSinRepetir * palabrasPorNivel * 3)
-        .get();
+        .get(soloCache ? const GetOptions(source: Source.cache) : null);
     return [for (final d in consulta.docs) palabraDesdeMapa(d.data())];
   }
 
