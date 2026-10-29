@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../contenido/actividades.dart';
 import '../estado/estado_evaluacion.dart';
 import '../estado/estado_usuario.dart';
 import '../estado/navegacion.dart';
 import '../pantallas/acceso/pantalla_acceso.dart';
 import '../pantallas/acceso/pantalla_carga.dart';
 import '../pantallas/acceso/pantalla_registro.dart';
-import '../pantallas/pantalla_provisional.dart';
+import '../pantallas/principal/pantalla_principal.dart';
+import '../pantallas/provisionales.dart';
 import '../servicios/recarga.dart';
 import '../tema/medidas.dart';
 import '../tema/tema_app.dart';
+import 'atras.dart';
 import 'escala_texto.dart';
 import 'idioma.dart';
 
@@ -51,37 +54,79 @@ class _Raiz extends StatefulWidget {
 class _RaizState extends State<_Raiz> {
   bool _cargaTerminada = false;
 
-  void _salirDeLaCarga(Navegacion navegacion, bool conectado) {
+  void _salirDeLaCarga(Navegacion navegacion, EstadoUsuario estado) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (navegacion.actual == Pantalla.carga) {
-        navegacion.irA(conectado ? Pantalla.provisional : Pantalla.acceso);
+      if (navegacion.actual != Pantalla.carga) {
+        return;
+      }
+      final usuario = estado.usuario;
+      if (usuario == null) {
+        navegacion.irA(Pantalla.acceso);
+      } else {
+        navegacion.entrar(evaluacionInicialHecha: usuario.evaluacionInicial);
       }
     });
   }
 
-  Widget _pantalla(Pantalla pantalla) => switch (pantalla) {
+  Widget _pantalla(Navegacion navegacion) => switch (navegacion.actual) {
     Pantalla.carga => PantallaCarga(
       alTerminar: () => setState(() => _cargaTerminada = true),
     ),
     Pantalla.acceso => const PantallaAcceso(),
     Pantalla.registro => const PantallaRegistro(),
-    Pantalla.provisional => const PantallaProvisional(),
+    Pantalla.principal => const PantallaPrincipal(),
+    Pantalla.bienvenida => const PantallaProvisional(
+      titulo: 'Evaluación inicial',
+      fase: 'La bienvenida y los seis módulos de la evaluación llegan en la fase 10.',
+      conCerrarSesion: true,
+    ),
+    Pantalla.lector => PantallaProvisional(
+      titulo: 'Lector',
+      fase: 'El lector de capítulos llega en la fase 8.',
+      alVolver: navegacion.volverDeLector,
+    ),
+    Pantalla.actividad => PantallaProvisional(
+      titulo: 'Actividad',
+      fase: 'Las actividades llegan en la fase 9.',
+      alVolver: () => navegacion.volverDeActividad(
+        libroDeActividad: actividadPorId(navegacion.actividadId)?.libroId,
+      ),
+    ),
+    Pantalla.resultados => PantallaProvisional(
+      titulo: 'NeuroScore',
+      fase: 'NeuroScore llega en la fase 11.',
+      alVolver: navegacion.salirDeResultados,
+    ),
+    Pantalla.editarPerfil => PantallaProvisional(
+      titulo: 'Editar perfil',
+      fase: 'Editar perfil llega en la fase 12.',
+      alVolver: () => navegacion.irAPestana(Pestanas.perfil),
+    ),
   };
 
   @override
   Widget build(BuildContext context) {
     final navegacion = context.watch<Navegacion>();
-    final (revisada, conectado) = context.select<EstadoUsuario, (bool, bool)>(
-      (estado) => (estado.cuentaRevisada, estado.conectado),
+    final estado = context.read<EstadoUsuario>();
+    final listo = context.select<EstadoUsuario, bool>(
+      (e) => e.cuentaRevisada && (!e.conectado || e.perfilCargado),
     );
-    if (navegacion.actual == Pantalla.carga && _cargaTerminada && revisada) {
-      _salirDeLaCarga(navegacion, conectado);
+    if (navegacion.actual == Pantalla.carga && _cargaTerminada && listo) {
+      _salirDeLaCarga(navegacion, estado);
     }
-    return AnimatedSwitcher(
-      duration: Medidas.fundidoPantallas,
-      child: KeyedSubtree(
-        key: ValueKey(navegacion.actual),
-        child: _pantalla(navegacion.actual),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (hecho, _) {
+        if (!hecho) {
+          atras(context);
+        }
+      },
+      child: AnimatedSwitcher(
+        duration: Medidas.fundidoPantallas,
+        child: KeyedSubtree(
+          key: ValueKey(navegacion.actual),
+          child: _pantalla(navegacion),
+        ),
       ),
     );
   }

@@ -46,12 +46,14 @@ class _PantallaAccesoState extends State<PantallaAcceso> {
     }
     setState(() => _ocupado = true);
     try {
-      await context.read<EstadoUsuario>().autenticacion.iniciarSesion(
-        nombre,
-        clave,
-      );
+      final usuario = await context
+          .read<EstadoUsuario>()
+          .autenticacion
+          .iniciarSesion(nombre, clave);
       if (mounted) {
-        context.read<Navegacion>().irA(Pantalla.provisional);
+        context.read<Navegacion>().entrar(
+          evaluacionInicialHecha: usuario.evaluacionInicial,
+        );
       }
     } on ErrorAcceso catch (error) {
       if (mounted) {

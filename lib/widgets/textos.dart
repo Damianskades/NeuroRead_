@@ -158,25 +158,30 @@ class Enlace extends StatelessWidget {
     required this.onTap,
     this.color = Colores.dorado,
     this.tamano = 13,
+    this.alineacion = TextAlign.center,
   });
 
   final String texto;
   final VoidCallback? onTap;
   final Color color;
   final double tamano;
+  final TextAlign alineacion;
 
   @override
   Widget build(BuildContext context) => Presionable(
     onTap: onTap,
     builder: (context, _) => SizedBox(
       height: 48,
-      child: Center(
+      child: Align(
+        alignment: alineacion == TextAlign.left
+            ? Alignment.centerLeft
+            : Alignment.center,
         child: Texto(
           texto,
           tamano: tamano,
           color: color,
           negrita: true,
-          alineacion: TextAlign.center,
+          alineacion: alineacion,
         ),
       ),
     ),

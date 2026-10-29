@@ -94,7 +94,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       );
       if (mounted) {
         setState(() => _error = '');
-        context.read<Navegacion>().irA(Pantalla.provisional);
+        context.read<Navegacion>().irA(Pantalla.bienvenida);
       }
     } on ErrorAcceso catch (error) {
       if (mounted) {
