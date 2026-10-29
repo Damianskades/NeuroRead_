@@ -8,15 +8,13 @@ import '../provisionales.dart';
 import 'detalle_libro.dart';
 import 'pestana_inicio.dart';
 import 'pestana_libros.dart';
+import 'pestana_ruta.dart';
 
 class PantallaPrincipal extends StatelessWidget {
   const PantallaPrincipal({super.key});
 
   Widget _pestana(String nombre, String? libroId) => switch (nombre) {
-    Pestanas.ruta => const PestanaProvisional(
-      titulo: 'Tu ruta',
-      fase: 'La ruta de actividades llega en la fase 9.',
-    ),
+    Pestanas.ruta => const PestanaRuta(),
     Pestanas.evaluacion => const PestanaProvisional(
       titulo: 'Evaluación',
       fase: 'La evaluación clasificatoria llega en la fase 11.',

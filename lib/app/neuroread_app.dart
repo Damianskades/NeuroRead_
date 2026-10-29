@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../contenido/actividades.dart';
 import '../estado/estado_evaluacion.dart';
 import '../estado/estado_usuario.dart';
 import '../estado/navegacion.dart';
 import '../pantallas/acceso/pantalla_acceso.dart';
 import '../pantallas/acceso/pantalla_carga.dart';
 import '../pantallas/acceso/pantalla_registro.dart';
+import '../pantallas/lectura/pantalla_actividad.dart';
 import '../pantallas/lectura/pantalla_lector.dart';
 import '../pantallas/principal/pantalla_principal.dart';
 import '../pantallas/provisionales.dart';
@@ -82,13 +82,7 @@ class _RaizState extends State<_Raiz> {
       conCerrarSesion: true,
     ),
     Pantalla.lector => const PantallaLector(),
-    Pantalla.actividad => PantallaProvisional(
-      titulo: 'Actividad',
-      fase: 'Las actividades llegan en la fase 9.',
-      alVolver: () => navegacion.volverDeActividad(
-        libroDeActividad: actividadPorId(navegacion.actividadId)?.libroId,
-      ),
-    ),
+    Pantalla.actividad => const PantallaActividad(),
     Pantalla.resultados => PantallaProvisional(
       titulo: 'NeuroScore',
       fase: 'NeuroScore llega en la fase 11.',
