@@ -25,6 +25,7 @@ import '../tema/tema_app.dart';
 import 'atras.dart';
 import 'escala_texto.dart';
 import 'idioma.dart';
+import 'marco_diseno.dart';
 
 class NeuroReadApp extends StatelessWidget {
   const NeuroReadApp({super.key});
@@ -47,7 +48,8 @@ class NeuroReadApp extends StatelessWidget {
       locale: Idioma.locale,
       supportedLocales: Idioma.soportados,
       localizationsDelegates: Idioma.delegados,
-      builder: (context, child) => EscalaTexto(child: child!),
+      builder: (context, child) =>
+          MarcoDiseno(child: EscalaTexto(child: child!)),
       home: const _Raiz(),
     ),
   );
