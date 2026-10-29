@@ -89,6 +89,12 @@ class EstadoUsuario extends ChangeNotifier {
     _escuchas.clear();
   }
 
+  Future<void> cerrarSesion() =>
+      autenticacion.cerrarSesion(antesDeLimpiar: _cancelarEscuchas);
+
+  Future<void> eliminarCuenta(String clave) =>
+      autenticacion.eliminarCuenta(clave, antesDeLimpiar: _cancelarEscuchas);
+
   @override
   void dispose() {
     _cuenta.cancel();

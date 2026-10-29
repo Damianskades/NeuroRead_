@@ -35,6 +35,11 @@ class Repositorio {
 
   WriteBatch lote() => _db.batch();
 
+  Future<void> limpiarCache() async {
+    await _db.terminate();
+    await _db.clearPersistence();
+  }
+
   Stream<Usuario?> escucharUsuario(String uid) => usuario(uid)
       .snapshots()
       .map((doc) => doc.exists ? Usuario.desdeMapa(doc.id, doc.data()!) : null);

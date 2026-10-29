@@ -1,21 +1,29 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 import '../modelos/conversion.dart';
 import '../modelos/usuario.dart';
 import 'errores.dart';
+import 'recarga.dart';
 import 'repositorio.dart';
 
 class ServicioAutenticacion {
-  ServicioAutenticacion({FirebaseAuth? auth, Repositorio? repositorio})
-    : _auth = auth ?? FirebaseAuth.instance,
-      repositorio = repositorio ?? Repositorio();
+  ServicioAutenticacion({
+    FirebaseAuth? auth,
+    Repositorio? repositorio,
+    this.trasLimpiarCache = reiniciarTrasLimpiarCache,
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       repositorio = repositorio ?? Repositorio();
 
   final FirebaseAuth _auth;
   final Repositorio repositorio;
+  final Future<void> Function() trasLimpiarCache;
 
   static const dominioCuentas = 'neuroreadhyo.firebaseapp.com';
   static const _servidor = GetOptions(source: Source.server);
@@ -32,7 +40,7 @@ class ServicioAutenticacion {
       'u_${_codificar(nombreUsuario.trim().toLowerCase())}';
 
   static String claveCorreo(String correo) =>
-      'c_${_codificar(correo.trim().toLowerCase())}';
+      'c_${sha256.convert(utf8.encode(correo.trim().toLowerCase()))}';
 
   static String _correoInterno() {
     const letras = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -245,7 +253,10 @@ class ServicioAutenticacion {
     }
   }
 
-  Future<void> eliminarCuenta(String clave) async {
+  Future<void> eliminarCuenta(
+    String clave, {
+    VoidCallback? antesDeLimpiar,
+  }) async {
     final cuenta = await _reautenticar(clave, Mensajes.claveIncorrecta);
     final uid = cuenta.uid;
     try {
@@ -276,7 +287,22 @@ class ServicioAutenticacion {
     } catch (error) {
       throw traducirError(error);
     }
+    antesDeLimpiar?.call();
+    await _limpiarCache();
   }
 
-  Future<void> cerrarSesion() => _auth.signOut();
+  Future<void> _limpiarCache() async {
+    try {
+      await repositorio.limpiarCache();
+    } catch (error) {
+      debugPrint('No se pudo borrar la caché local: $error');
+    }
+    await trasLimpiarCache();
+  }
+
+  Future<void> cerrarSesion({VoidCallback? antesDeLimpiar}) async {
+    antesDeLimpiar?.call();
+    await _auth.signOut();
+    await _limpiarCache();
+  }
 }

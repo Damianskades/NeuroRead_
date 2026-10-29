@@ -45,7 +45,7 @@ service cloud.firestore {
     }
 
     function claveCorreo(correo) {
-      return 'c_' + codificar(correo);
+      return 'c_' + hashing.sha256(correo.lower()).toHexString().lower();
     }
 
     function rutaAcceso(clave) {
