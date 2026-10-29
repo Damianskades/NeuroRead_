@@ -5,12 +5,14 @@ import '../../estado/navegacion.dart';
 import '../../tema/medidas.dart';
 import '../../widgets/neo_tab_bar.dart';
 import '../provisionales.dart';
+import 'detalle_libro.dart';
 import 'pestana_inicio.dart';
+import 'pestana_libros.dart';
 
 class PantallaPrincipal extends StatelessWidget {
   const PantallaPrincipal({super.key});
 
-  Widget _pestana(String nombre) => switch (nombre) {
+  Widget _pestana(String nombre, String? libroId) => switch (nombre) {
     Pestanas.ruta => const PestanaProvisional(
       titulo: 'Tu ruta',
       fase: 'La ruta de actividades llega en la fase 9.',
@@ -19,10 +21,8 @@ class PantallaPrincipal extends StatelessWidget {
       titulo: 'Evaluación',
       fase: 'La evaluación clasificatoria llega en la fase 11.',
     ),
-    Pestanas.libros || Pestanas.libroDetalle => const PestanaProvisional(
-      titulo: 'Libros',
-      fase: 'Los libros y el lector llegan en la fase 8.',
-    ),
+    Pestanas.libros => const PestanaLibros(),
+    Pestanas.libroDetalle => DetalleLibro(libroId: libroId),
     Pestanas.perfil => const PestanaProvisional(
       titulo: 'Perfil',
       fase: 'El perfil llega en la fase 12.',
@@ -43,8 +43,12 @@ class PantallaPrincipal extends StatelessWidget {
               child: AnimatedSwitcher(
                 duration: Medidas.fundidoPestanas,
                 child: KeyedSubtree(
-                  key: ValueKey(navegacion.pestana),
-                  child: _pestana(navegacion.pestana),
+                  key: ValueKey(
+                    navegacion.pestana == Pestanas.libroDetalle
+                        ? '${navegacion.pestana}_${navegacion.libroId}'
+                        : navegacion.pestana,
+                  ),
+                  child: _pestana(navegacion.pestana, navegacion.libroId),
                 ),
               ),
             ),

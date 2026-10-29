@@ -8,6 +8,7 @@ import '../estado/navegacion.dart';
 import '../pantallas/acceso/pantalla_acceso.dart';
 import '../pantallas/acceso/pantalla_carga.dart';
 import '../pantallas/acceso/pantalla_registro.dart';
+import '../pantallas/lectura/pantalla_lector.dart';
 import '../pantallas/principal/pantalla_principal.dart';
 import '../pantallas/provisionales.dart';
 import '../servicios/recarga.dart';
@@ -80,11 +81,7 @@ class _RaizState extends State<_Raiz> {
       fase: 'La bienvenida y los seis módulos de la evaluación llegan en la fase 10.',
       conCerrarSesion: true,
     ),
-    Pantalla.lector => PantallaProvisional(
-      titulo: 'Lector',
-      fase: 'El lector de capítulos llega en la fase 8.',
-      alVolver: navegacion.volverDeLector,
-    ),
+    Pantalla.lector => const PantallaLector(),
     Pantalla.actividad => PantallaProvisional(
       titulo: 'Actividad',
       fase: 'Las actividades llegan en la fase 9.',
