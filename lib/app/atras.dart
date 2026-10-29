@@ -13,7 +13,14 @@ void atras(BuildContext context) {
   switch (navegacion.actual) {
     case Pantalla.acceso || Pantalla.registro:
       salirDeLaApp();
-    case Pantalla.carga || Pantalla.bienvenida:
+    case Pantalla.carga ||
+        Pantalla.bienvenida ||
+        Pantalla.velocidad ||
+        Pantalla.comprension ||
+        Pantalla.interpretacion ||
+        Pantalla.imaginacion ||
+        Pantalla.concentracion ||
+        Pantalla.retencion:
       return;
     case Pantalla.lector:
       navegacion.volverDeLector();

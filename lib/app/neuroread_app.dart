@@ -7,6 +7,11 @@ import '../estado/navegacion.dart';
 import '../pantallas/acceso/pantalla_acceso.dart';
 import '../pantallas/acceso/pantalla_carga.dart';
 import '../pantallas/acceso/pantalla_registro.dart';
+import '../pantallas/evaluacion/pantalla_bienvenida.dart';
+import '../pantallas/evaluacion/pantalla_comprension.dart';
+import '../pantallas/evaluacion/pantalla_imaginacion.dart';
+import '../pantallas/evaluacion/pantalla_interpretacion.dart';
+import '../pantallas/evaluacion/pantalla_velocidad.dart';
 import '../pantallas/lectura/pantalla_actividad.dart';
 import '../pantallas/lectura/pantalla_lector.dart';
 import '../pantallas/principal/pantalla_principal.dart';
@@ -76,9 +81,14 @@ class _RaizState extends State<_Raiz> {
     Pantalla.acceso => const PantallaAcceso(),
     Pantalla.registro => const PantallaRegistro(),
     Pantalla.principal => const PantallaPrincipal(),
-    Pantalla.bienvenida => const PantallaProvisional(
-      titulo: 'Evaluación inicial',
-      fase: 'La bienvenida y los seis módulos de la evaluación llegan en la fase 10.',
+    Pantalla.bienvenida => const PantallaBienvenida(),
+    Pantalla.velocidad => const PantallaVelocidad(),
+    Pantalla.comprension => const PantallaComprension(),
+    Pantalla.interpretacion => const PantallaInterpretacion(),
+    Pantalla.imaginacion => const PantallaImaginacion(),
+    Pantalla.concentracion || Pantalla.retencion => const PantallaProvisional(
+      titulo: 'NeuroFocus',
+      fase: 'NeuroFocus y NeuroMemory llegan en la fase 10b.',
       conCerrarSesion: true,
     ),
     Pantalla.lector => const PantallaLector(),
