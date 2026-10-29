@@ -159,5 +159,12 @@ class _GrupoSobreTecladoState extends State<GrupoSobreTeclado>
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) =>
+      NotificationListener<SizeChangedLayoutNotification>(
+        onNotification: (_) {
+          _programar();
+          return true;
+        },
+        child: SizeChangedLayoutNotifier(child: widget.child),
+      );
 }

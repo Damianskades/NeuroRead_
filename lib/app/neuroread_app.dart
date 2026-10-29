@@ -18,6 +18,7 @@ import '../pantallas/lectura/pantalla_actividad.dart';
 import '../pantallas/lectura/pantalla_lector.dart';
 import '../pantallas/principal/pantalla_principal.dart';
 import '../pantallas/provisionales.dart';
+import '../pantallas/resultados/pantalla_resultados.dart';
 import '../servicios/recarga.dart';
 import '../tema/medidas.dart';
 import '../tema/tema_app.dart';
@@ -92,11 +93,7 @@ class _RaizState extends State<_Raiz> {
     Pantalla.retencion => const PantallaRetencion(),
     Pantalla.lector => const PantallaLector(),
     Pantalla.actividad => const PantallaActividad(),
-    Pantalla.resultados => PantallaProvisional(
-      titulo: 'NeuroScore',
-      fase: 'NeuroScore llega en la fase 11.',
-      alVolver: navegacion.salirDeResultados,
-    ),
+    Pantalla.resultados => const PantallaResultados(),
     Pantalla.editarPerfil => PantallaProvisional(
       titulo: 'Editar perfil',
       fase: 'Editar perfil llega en la fase 12.',

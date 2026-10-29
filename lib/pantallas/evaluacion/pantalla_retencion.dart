@@ -116,7 +116,7 @@ class _PantallaRetencionState extends State<PantallaRetencion> {
     context.read<EstadoEvaluacion>().datos!.retencion.correctas = _correctas;
     final navegacion = context.read<Navegacion>();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => navegacion.irA(Pantalla.resultados),
+      (_) => navegacion.abrirNeuroscore(null, origen: Pestanas.inicio),
     );
   }
 

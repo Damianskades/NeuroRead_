@@ -6,6 +6,7 @@ import '../../tema/medidas.dart';
 import '../../widgets/neo_tab_bar.dart';
 import '../provisionales.dart';
 import 'detalle_libro.dart';
+import 'pestana_evaluacion.dart';
 import 'pestana_inicio.dart';
 import 'pestana_libros.dart';
 import 'pestana_ruta.dart';
@@ -15,10 +16,7 @@ class PantallaPrincipal extends StatelessWidget {
 
   Widget _pestana(String nombre, String? libroId) => switch (nombre) {
     Pestanas.ruta => const PestanaRuta(),
-    Pestanas.evaluacion => const PestanaProvisional(
-      titulo: 'Evaluación',
-      fase: 'La evaluación clasificatoria llega en la fase 11.',
-    ),
+    Pestanas.evaluacion => const PestanaEvaluacion(),
     Pestanas.libros => const PestanaLibros(),
     Pestanas.libroDetalle => DetalleLibro(libroId: libroId),
     Pestanas.perfil => const PestanaProvisional(
